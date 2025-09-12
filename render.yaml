@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: dms
+    env:
+      - key: NIXPACKS_JDK_VERSION
+        value: "17"
+        scope: build
