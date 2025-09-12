@@ -1,7 +1,26 @@
 services:
   - type: web
     name: dms
+    branch: main
+    plan: free
+    autoDeploy: true
+
+    # Make Java available DURING BUILD
     env:
       - key: NIXPACKS_JDK_VERSION
         value: "17"
         scope: build
+
+    # Runtime env vars (pull from Render Secrets so you don't hardcode)
+    envVars:
+      - key: DB_URL
+        fromSecret: DB_URL
+      - key: DB_USER
+        fromSecret: DB_USER
+      - key: DB_PASS
+        fromSecret: DB_PASS
+
+    buildCommand: |
+      chmod +x mvnw && ./mvnw -DskipTests package
+    startCommand: |
+      java -Dserver.port=$PORT -jar target/*.jar
