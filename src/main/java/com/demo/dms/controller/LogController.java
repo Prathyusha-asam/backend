@@ -3,11 +3,12 @@ package com.demo.dms.controller;
 import com.demo.dms.entity.Log;
 import com.demo.dms.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/dms/logs") // unified base
@@ -22,8 +23,8 @@ public class LogController {
     }
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<Log>> findAll() {
-        return ResponseEntity.ok(logService.getHistory());
+    public ResponseEntity<Page<Log>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(logService.getHistory(pageable));
     }
 
     @GetMapping(value = "/{ticketNumber}", produces = "application/json")
@@ -33,6 +34,7 @@ public class LogController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    //create request
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<Log> create(@RequestBody Log log) {
         Log saved = logService.createHistory(log);

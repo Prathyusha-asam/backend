@@ -15,7 +15,7 @@ public class Log {
     @Column(name = "LOG_ID")
     private long logId;
 
-    @Column(name = "MODIFIED_DATE")
+    @Column(name = "MODIFIED_ON")
     private String modifiedDate;
 
     @Column(name = "DATA")
@@ -29,6 +29,12 @@ public class Log {
 
     @Column(name = "TICKET_NUMBER")
     private long ticketNumber;
+
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+
+    @Column(name = "CREATED_ON")
+    private String createdOn;
 
     public long getLogId() {
         return logId;
@@ -76,5 +82,21 @@ public class Log {
 
     public void setTicketNumber(long ticketNumber) {
         this.ticketNumber = ticketNumber;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
     }
 }

@@ -12,8 +12,11 @@ public class TicketDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private long Id;
+
     @Column(name = "TICKET_NUMBER")
-    private long ticketNumber;
+    private String ticketNumber;
 
     @Column(name = "TICKET_TYPE")
     private String ticketType;
@@ -42,11 +45,31 @@ public class TicketDetails {
     @Column(name = "COMPLETE_DATE")
     private String completeDate;
 
-    public long getTicketNumber() {
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+
+    @Column(name = "CREATED_ON")
+    private String createdOn;
+
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
+
+    @Column(name = "UPDATED_ON")
+    private String updatedOn;
+
+    public long getId() {
+        return Id;
+    }
+
+    public void setId(long id) {
+        Id = id;
+    }
+
+    public String getTicketNumber() {
         return ticketNumber;
     }
 
-    public void setTicketNumber(long ticketNumber) {
+    public void setTicketNumber(String ticketNumber) {
         this.ticketNumber = ticketNumber;
     }
 
@@ -120,5 +143,37 @@ public class TicketDetails {
 
     public void setCompleteDate(String completeDate) {
         this.completeDate = completeDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public String getUpdatedOn() {
+        return updatedOn;
+    }
+
+    public void setUpdatedOn(String updatedOn) {
+        this.updatedOn = updatedOn;
     }
 }

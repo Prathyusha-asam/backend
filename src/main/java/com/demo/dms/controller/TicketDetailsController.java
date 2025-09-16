@@ -3,6 +3,8 @@ package com.demo.dms.controller;
 import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.service.TicketDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dms") // ⚠️ If you also set server.servlet.context-path=/dms, remove this to avoid /dms/dms/...
+@RequestMapping("/dms")
 @CrossOrigin("*")
 public class TicketDetailsController {
 
@@ -21,30 +23,34 @@ public class TicketDetailsController {
         this.ticketDetailsService = ticketDetailsService;
     }
 
-    // GET one by id
-    @GetMapping(value = "/ticket-details/{id}", produces = "application/json")
-    public ResponseEntity<TicketDetails> getTicketDetailsById(@PathVariable long id) {
-        return ticketDetailsService.getTicketById(id)
+    @GetMapping(value = "/ticket-details/{ticketNumber}", produces = "application/json")
+    public ResponseEntity<TicketDetails> getDetailsByTicketNumber(@PathVariable String ticketNumber) {
+        return ticketDetailsService.getDetailsByTicketNumber(ticketNumber)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // LIST all or filter by assignee (use ?assignee=alice@company.com)
     @GetMapping(value = "/ticket-details", produces = "application/json")
-    public ResponseEntity<List<TicketDetails>> list(@RequestParam(name = "email", required = false) String assignee) {
-        List<TicketDetails> out = (assignee == null || assignee.isBlank())
-                ? ticketDetailsService.getAllTicketDetails()
-                : ticketDetailsService.getTicketByAssignee(assignee);
+    public ResponseEntity<Page<TicketDetails>> list(@RequestParam(name = "email", required = false) String assignee, Pageable pageable) {
+        Page<TicketDetails> out = (assignee == null || assignee.isBlank())
+                ? ticketDetailsService.getAllTicketDetails(pageable)
+                : ticketDetailsService.getTicketByAssignee(assignee, pageable);
         return ResponseEntity.ok(out);
     }
 
-    // CREATE (returns 201 + Location header)
     @PostMapping(value = "/ticket-details", consumes = "application/json", produces = "application/json")
     public ResponseEntity<TicketDetails> create(@RequestBody TicketDetails ticketDetails) {
         TicketDetails saved = ticketDetailsService.createTicketDetails(ticketDetails);
         return ResponseEntity
                 .created(URI.create("/dms/ticket-details/" + saved.getTicketNumber()))
                 .body(saved);
+    }
+
+    @PutMapping(value = "/ticket-details/{ticketNumber}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<TicketDetails> updateFull(@PathVariable String ticketNumber,
+                                                    @RequestBody TicketDetails body) {
+        TicketDetails updated = ticketDetailsService.updateFull(ticketNumber, body);
+        return ResponseEntity.ok(updated);
     }
 
     // (Optional) BULK DELETE: /dms/ticket-details?ids=1,2,3
