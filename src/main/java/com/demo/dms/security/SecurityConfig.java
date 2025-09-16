@@ -3,9 +3,11 @@ package com.demo.dms.security;
 
 import com.demo.dms.web.dto.ApiError;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,10 +43,8 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**").permitAll()       // <-- allow login/refresh
-                    .requestMatchers("/actuator/health").permitAll()
-                    // (dev only) open a test GET if you want:
-                    // .requestMatchers(HttpMethod.GET, "/dms/ticket-details").permitAll()
+                    .requestMatchers("/auth/**", "/actuator/health", "/error").permitAll()
+                    .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                     .anyRequest().authenticated()
             )
 

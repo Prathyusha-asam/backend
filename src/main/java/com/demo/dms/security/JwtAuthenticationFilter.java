@@ -2,7 +2,6 @@
 package com.demo.dms.security;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,12 +17,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
+  private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
 
   public JwtAuthenticationFilter(JwtService jwtService,
                                  @Qualifier("appUserDetailsService") UserDetailsService uds) {
@@ -36,6 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                   HttpServletResponse response,
                                   FilterChain chain)
           throws ServletException, IOException {
+
+    log.debug("JWT filter: {} {}", request.getMethod(), request.getRequestURI());
+    log.debug("Auth header present? {}", request.getHeader("Authorization") != null);
 
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {

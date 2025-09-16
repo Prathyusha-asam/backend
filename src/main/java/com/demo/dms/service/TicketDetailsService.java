@@ -6,8 +6,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +30,7 @@ public class TicketDetailsService {
     }
     
     public Optional<TicketDetails> getDetailsByTicketNumber(String ticketNumber) {
-        return ticketDetailsRepository.findByTicketNumber(ticketNumber);
+        return ticketDetailsRepository.findByTicketNumberIgnoreCase(ticketNumber);
     }
 
     public Page<TicketDetails> getTicketByAssignee(String assignee, Pageable pageable) {
@@ -36,16 +38,33 @@ public class TicketDetailsService {
     }
 
     @Transactional
-    public TicketDetails createTicketDetails(TicketDetails ticketDetails) {
-        if (ticketDetails.getAssignee() != null) {
-            ticketDetails.setAssignee(ticketDetails.getAssignee().trim());
+    public TicketDetails createTicketDetails(TicketDetails td) {
+        // normalize + validate
+        String tn = td.getTicketNumber() == null ? "" : td.getTicketNumber().trim();
+        if (tn.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ticketNumber is required");
         }
-        return ticketDetailsRepository.save(ticketDetails);
+
+        if (ticketDetailsRepository.existsByTicketNumberIgnoreCase(tn)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "ticketNumber already exists");
+        }
+
+        td.setTicketNumber(tn);
+        if (td.getAssignee() != null) {
+            td.setAssignee(td.getAssignee().trim());
+        }
+
+        try {
+            return ticketDetailsRepository.save(td);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "ticketNumber already exists");
+        }
     }
+
 
     @Transactional
     public TicketDetails updateFull(String ticketNumber, TicketDetails body) {
-        TicketDetails existing = ticketDetailsRepository.findByTicketNumber(ticketNumber)
+        TicketDetails existing = ticketDetailsRepository.findByTicketNumberIgnoreCase(ticketNumber)
                 .orElseThrow(() -> new EntityNotFoundException("Ticket " + ticketNumber + " not found"));
 
         existing.setTicketNumber(body.getTicketNumber());

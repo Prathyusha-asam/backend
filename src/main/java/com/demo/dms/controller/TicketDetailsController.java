@@ -2,6 +2,7 @@ package com.demo.dms.controller;
 
 import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.service.TicketDetailsService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +40,7 @@ public class TicketDetailsController {
     }
 
     @PostMapping(value = "/ticket-details", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<TicketDetails> create(@RequestBody TicketDetails ticketDetails) {
+    public ResponseEntity<TicketDetails> create(@Valid @RequestBody TicketDetails ticketDetails) {
         TicketDetails saved = ticketDetailsService.createTicketDetails(ticketDetails);
         return ResponseEntity
                 .created(URI.create("/dms/ticket-details/" + saved.getTicketNumber()))

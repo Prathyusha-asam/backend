@@ -12,5 +12,8 @@ import java.util.Optional;
 public interface TicketDetailsRepository extends JpaRepository<TicketDetails, Long> {
     Page<TicketDetails> findByAssignee(String assignee, Pageable pageable);
 
-    Optional<TicketDetails> findByTicketNumber(String ticketNumber);
+    Optional<TicketDetails> findByTicketNumberIgnoreCase(String ticketNumber);
+
+    boolean existsByTicketNumberIgnoreCase(String ticketNumber);
+
 }

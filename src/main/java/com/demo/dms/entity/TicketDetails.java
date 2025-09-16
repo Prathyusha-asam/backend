@@ -1,6 +1,10 @@
 package com.demo.dms.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +19,9 @@ public class TicketDetails {
     @Column(name = "ID")
     private long Id;
 
-    @Column(name = "TICKET_NUMBER")
+    @Column(name = "TICKET_NUMBER", nullable = false, unique = true, length = 50)
+    @NotBlank(message = "ticketNumber is required")
+    @Size(max = 50, message = "ticketNumber must be ≤ 50 chars")
     private String ticketNumber;
 
     @Column(name = "TICKET_TYPE")
@@ -56,6 +62,11 @@ public class TicketDetails {
 
     @Column(name = "UPDATED_ON")
     private String updatedOn;
+
+    @PrePersist @PreUpdate
+    void normalize() {
+        if (ticketNumber != null) ticketNumber = ticketNumber.trim();
+    }
 
     public long getId() {
         return Id;
