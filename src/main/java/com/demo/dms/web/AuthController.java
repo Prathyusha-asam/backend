@@ -25,8 +25,6 @@ public class AuthController {
   private final JwtService jwt;
   private final RefreshTokenService refreshSvc;
   private final UserAccountRepository userRepo;
- /* private final long accessExpMs;   // mirror properties
-  private final long refreshExpMs;*/
 
   @Value("${app.jwt.access-expiration-ms}") long accessExpMs;
   @Value("${app.jwt.refresh-expiration-ms}") long refreshExpMs;
@@ -40,13 +38,25 @@ public class AuthController {
     this.jwt = jwt;
     this.refreshSvc = refreshSvc;
     this.userRepo = userRepo;
-/*    this.accessExpMs = 900_000L;
-    this.refreshExpMs = 1_209_600_000L;*/
   }
 
   @PostMapping("/login")
-  public ResponseEntity<TokenPairResponse> login(@RequestBody LoginRequest req) {
-    authManager.authenticate(new UsernamePasswordAuthenticationToken(req.email(), req.password()));
+  public ResponseEntity<?> login(@RequestBody LoginRequest req) {
+
+    /*try {
+      authManager.authenticate(
+              new UsernamePasswordAuthenticationToken(req.email(), req.password()));
+    } catch (org.springframework.security.authentication.BadCredentialsException
+             | org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+      return ResponseEntity.status(401).body(ApiError.unauthorized("Invalid email or password"));
+    } catch (org.springframework.security.authentication.DisabledException e) {
+      return ResponseEntity.status(403).body(ApiError.forbidden("User is disabled"));
+    } catch (org.springframework.security.authentication.LockedException e) {
+      return ResponseEntity.status(403).body(ApiError.forbidden("User is locked"));
+    }*/
+
+    authManager.authenticate(
+            new UsernamePasswordAuthenticationToken(req.email(), req.password()));
 
     UserDetails user = uds.loadUserByUsername(req.email());
     String accessJti = UUID.randomUUID().toString();
