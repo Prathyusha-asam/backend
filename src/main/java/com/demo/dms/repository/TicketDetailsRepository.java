@@ -16,4 +16,8 @@ public interface TicketDetailsRepository extends JpaRepository<TicketDetails, Lo
 
     boolean existsByTicketNumberIgnoreCase(String ticketNumber);
 
+    long count();
+
+    long countByReturnedTrue();
+
 }

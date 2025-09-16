@@ -2,6 +2,7 @@ package com.demo.dms.service;
 
 import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.repository.TicketDetailsRepository;
+import com.demo.dms.web.dto.TicketStats;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -66,14 +68,24 @@ public class TicketDetailsService {
     public TicketDetails updateFull(String ticketNumber, TicketDetails body) {
         TicketDetails existing = ticketDetailsRepository.findByTicketNumberIgnoreCase(ticketNumber)
                 .orElseThrow(() -> new EntityNotFoundException("Ticket " + ticketNumber + " not found"));
+        boolean isReturned = false;
+        if("Ready-to-Dev".equalsIgnoreCase(body.getStatus()) && "Testing".equalsIgnoreCase(existing.getStatus())) {
+            isReturned = true;
+        }
 
         existing.setTicketNumber(body.getTicketNumber());
         existing.setTicketType(body.getTicketType());
         existing.setDevType(body.getDevType());
         existing.setStatus(body.getStatus());
         existing.setEstimation(body.getEstimation());
-        existing.setReturned(body.isReturned());
-        existing.setReturnNumber(body.getReturnNumber());
+
+        if(existing.isReturned()) {
+            existing.setReturnNumber(body.getReturnNumber()+1);
+        } else {
+            existing.setReturnNumber(body.getReturnNumber());
+        }
+
+        existing.setReturned(isReturned);
         existing.setAssignee(body.getAssignee());
         existing.setStartDate(body.getStartDate());
         existing.setCompleteDate(body.getCompleteDate());
@@ -83,6 +95,13 @@ public class TicketDetailsService {
         existing.setUpdatedOn(String.valueOf(java.time.Instant.now()));
 
         return ticketDetailsRepository.save(existing);
+    }
+
+    @Transactional(readOnly = true)
+    public TicketStats getStats() {
+        long total = ticketDetailsRepository.count();
+        long returned = ticketDetailsRepository.countByReturnedTrue(); // or countByReturnedTrue() / custom query
+        return new TicketStats(total, returned);
     }
 
     @Transactional

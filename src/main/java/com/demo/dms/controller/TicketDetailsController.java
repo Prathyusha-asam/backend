@@ -2,6 +2,7 @@ package com.demo.dms.controller;
 
 import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.service.TicketDetailsService;
+import com.demo.dms.web.dto.TicketStats;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,11 @@ public class TicketDetailsController {
                                                     @RequestBody TicketDetails body) {
         TicketDetails updated = ticketDetailsService.updateFull(ticketNumber, body);
         return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping(value = "/ticket-details/stats", produces = "application/json")
+    public ResponseEntity<TicketStats> stats() {
+        return ResponseEntity.ok(ticketDetailsService.getStats());
     }
 
     // (Optional) BULK DELETE: /dms/ticket-details?ids=1,2,3
