@@ -57,6 +57,7 @@ public class TicketDetailsService {
         }
 
         try {
+            td.setCreatedOn(String.valueOf(java.time.Instant.now()));
             return ticketDetailsRepository.save(td);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "ticketNumber already exists");

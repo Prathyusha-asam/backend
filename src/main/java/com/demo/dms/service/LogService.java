@@ -26,6 +26,7 @@ public class LogService {
 
     @Transactional
     public Log createHistory(Log log) {
+        log.setCreatedOn(String.valueOf(java.time.Instant.now()));
         return logRepository.save(log);
     }
 
