@@ -30,7 +30,7 @@ public class LogService {
         return logRepository.save(log);
     }
 
-    public Optional<Log> getHistoryById(long ticketNumber) {
+    public Optional<Log> getHistoryById(String ticketNumber) {
         return Optional.ofNullable(logRepository.findByTicketNumber(ticketNumber));
     }
 }

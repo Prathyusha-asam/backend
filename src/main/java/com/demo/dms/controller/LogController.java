@@ -28,7 +28,7 @@ public class LogController {
     }
 
     @GetMapping(value = "/{ticketNumber}", produces = "application/json")
-    public ResponseEntity<Log> getOne(@PathVariable long ticketNumber) {
+    public ResponseEntity<Log> getOne(@PathVariable String ticketNumber) {
         return logService.getHistoryById(ticketNumber)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

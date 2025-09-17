@@ -28,7 +28,7 @@ public class Log {
     private String modifiedBy;
 
     @Column(name = "TICKET_NUMBER")
-    private long ticketNumber;
+    private String ticketNumber;
 
     @Column(name = "CREATED_BY")
     private String createdBy;
@@ -76,11 +76,11 @@ public class Log {
         this.modifiedBy = modifiedBy;
     }
 
-    public long getTicketNumber() {
+    public String getTicketNumber() {
         return ticketNumber;
     }
 
-    public void setTicketNumber(long ticketNumber) {
+    public void setTicketNumber(String ticketNumber) {
         this.ticketNumber = ticketNumber;
     }
 
