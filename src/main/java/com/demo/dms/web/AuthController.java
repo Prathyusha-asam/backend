@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -66,10 +67,12 @@ public class AuthController {
     String refresh = jwt.generateRefresh(user, refreshJti);
 
     // Persist hashed refresh
-    Integer userId = userRepo.findByEmailIgnoreCase(req.email()).map(UserAccount::getUserId).orElseThrow();
+    Optional<UserAccount> userAccount = userRepo.findByEmailIgnoreCase(req.email());
+    Integer userId = userAccount.map(UserAccount::getUserId).orElseThrow();
     refreshSvc.saveRaw(userId, refresh, refreshExpMs);
+    return ResponseEntity.ok(TokenPairLoginResponse.bearer(access,refresh,accessExpMs,userAccount));
 
-    return ResponseEntity.ok(TokenPairResponse.bearer(access, refresh, accessExpMs));
+//    return ResponseEntity.ok(TokenPairResponse.bearer(access, refresh, accessExpMs));
   }
 
   @PostMapping("/refresh")
