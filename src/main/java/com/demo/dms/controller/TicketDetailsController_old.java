@@ -13,15 +13,17 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+/*
 @RestController
 @RequestMapping("/dms")
 @CrossOrigin("*")
-public class TicketDetailsController {
+*/
+public class TicketDetailsController_old {
 
     private final TicketDetailsService ticketDetailsService;
 
     @Autowired
-    public TicketDetailsController(TicketDetailsService ticketDetailsService) {
+    public TicketDetailsController_old(TicketDetailsService ticketDetailsService) {
         this.ticketDetailsService = ticketDetailsService;
     }
 

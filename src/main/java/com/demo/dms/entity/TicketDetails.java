@@ -7,9 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TICKET_DETAILS")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "TICKET_DETAILS", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_TICKET_DETAILS_TN", columnNames = "TICKET_NUMBER")
+})
 public class TicketDetails {
 
     @Id

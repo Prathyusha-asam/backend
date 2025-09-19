@@ -1,6 +1,8 @@
 package com.demo.dms.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +29,9 @@ public class Log {
     @Column(name = "MODIFIED_BY")
     private String modifiedBy;
 
-    @Column(name = "TICKET_NUMBER")
+    @Column(name = "TICKET_NUMBER", nullable = false, unique = true, length = 50)
+    @NotBlank(message = "ticketNumber is required")
+    @Size(max = 50, message = "ticketNumber must be ≤ 50 chars")
     private String ticketNumber;
 
     @Column(name = "CREATED_BY")

@@ -73,7 +73,7 @@ public class TicketDetailsService {
         if("Ready-to-Dev".equalsIgnoreCase(body.getStatus()) && "Testing".equalsIgnoreCase(existing.getStatus())) {
             isReturned = true;
         }
-
+        existing.setId(body.getId());
         existing.setTicketNumber(body.getTicketNumber());
         existing.setTicketType(body.getTicketType());
         existing.setDevType(body.getDevType());
@@ -110,4 +110,7 @@ public class TicketDetailsService {
         ticketDetailsRepository.deleteAllByIdInBatch(ids);
     }
 
+    public void delete(TicketDetails existing) {
+        ticketDetailsRepository.delete(existing);
+    }
 }

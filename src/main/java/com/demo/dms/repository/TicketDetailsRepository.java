@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+
 public interface TicketDetailsRepository extends JpaRepository<TicketDetails, Long> {
     Page<TicketDetails> findByAssignee(String assignee, Pageable pageable);
 
@@ -19,5 +19,7 @@ public interface TicketDetailsRepository extends JpaRepository<TicketDetails, Lo
     long count();
 
     long countByReturnedTrue();
+
+    void deleteByTicketNumberIgnoreCase(String ticketNumber);
 
 }
