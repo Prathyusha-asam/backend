@@ -28,6 +28,9 @@ public class UserAccount {
     @Column(name = "ROLE")
     private String role;
 
+    @Column(name = "DEV_TYPE")
+    private String devType;
+
     public int getUserId() {
         return userId;
     }
@@ -66,5 +69,13 @@ public class UserAccount {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getDevType() {
+        return devType;
+    }
+
+    public void setDevType(String devType) {
+        this.devType = devType;
     }
 }
