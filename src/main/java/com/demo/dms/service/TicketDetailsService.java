@@ -10,10 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -112,5 +112,30 @@ public class TicketDetailsService {
 
     public void delete(TicketDetails existing) {
         ticketDetailsRepository.delete(existing);
+    }
+
+    public Page<TicketDetails> search(String assignee, String ticketNumber, Pageable pageable) {
+
+        boolean hasAssignee = StringUtils.hasText(assignee);
+        boolean hasTicket = StringUtils.hasText(ticketNumber);
+
+        Page<TicketDetails> page;
+
+        if (hasAssignee && hasTicket) {
+            page = ticketDetailsRepository.findByAssigneeIgnoreCaseAndTicketNumberStartingWithIgnoreCase(
+                    assignee.trim(), ticketNumber.trim(), pageable);
+        } else if (hasAssignee) {
+            page = ticketDetailsRepository.findByAssigneeIgnoreCase(assignee.trim(), pageable);
+        } else if (hasTicket) {
+            page = ticketDetailsRepository.findByTicketNumberStartingWithIgnoreCase(ticketNumber.trim(), pageable);
+        } else {
+            page = ticketDetailsRepository.findAll(pageable);
+        }
+
+        return page;
+    }
+
+    public List<TicketDetails> suggest( String normPrefix, String normAssignee, Pageable page) {
+        return ticketDetailsRepository.suggestTickets(normPrefix, normAssignee, page);
     }
 }
