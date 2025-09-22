@@ -1,9 +1,7 @@
 package com.demo.dms.service;
 
 import com.demo.dms.entity.ParentTicketDetails;
-import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.repository.ParentTicketDetailsRepository;
-import com.demo.dms.web.dto.TicketViewDtos;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

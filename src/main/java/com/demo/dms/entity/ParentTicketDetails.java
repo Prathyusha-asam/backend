@@ -46,6 +46,7 @@ public class ParentTicketDetails {
     @Column(name = "Updated_On", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
+
     public Long getId() {
         return id;
     }

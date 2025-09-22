@@ -32,7 +32,7 @@ public class TicketDetailsEntry {
     private String assignee;
 
     @Column(name = "Estimation", length = 50)
-    private String estimation;
+    private long estimation;
 
     @Column(name = "Status", length = 50)
     private String status;
@@ -93,11 +93,11 @@ public class TicketDetailsEntry {
         this.assignee = assignee;
     }
 
-    public String getEstimation() {
+    public long getEstimation() {
         return estimation;
     }
 
-    public void setEstimation(String estimation) {
+    public void setEstimation(long estimation) {
         this.estimation = estimation;
     }
 

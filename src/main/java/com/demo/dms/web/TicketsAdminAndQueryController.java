@@ -5,7 +5,9 @@ import com.demo.dms.entity.TicketDetailsEntry;
 import com.demo.dms.repository.ParentTicketDetailsRepository;
 import com.demo.dms.repository.TicketDetailsEntryRepository;
 import com.demo.dms.security.AuthUtils;
+import com.demo.dms.service.EntryService;
 import com.demo.dms.service.ParentTicketService;
+import com.demo.dms.web.dto.AdminAndEntryDto;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,14 +28,17 @@ public class TicketsAdminAndQueryController {
   private final TicketDetailsEntryRepository entryRepo;
   private final ParentTicketService parentTicketService;
 
+  private final EntryService entryService;
+
 
   public TicketsAdminAndQueryController(ParentTicketDetailsRepository parentRepo,
                                         TicketDetailsEntryRepository entryRepo,
-                                        ParentTicketService parentTicketService) {
+                                        ParentTicketService parentTicketService, EntryService entryService) {
     this.parentRepo = parentRepo;
     this.entryRepo = entryRepo;
     this.parentTicketService = parentTicketService;
 
+      this.entryService = entryService;
   }
 
   // ------------------------------------------------------------
@@ -88,11 +91,11 @@ public class TicketsAdminAndQueryController {
   // PUT /dms/tickets/{ticketNumber}
   // Body: ParentTicketDetails (fields to overwrite if non-null)
   // ------------------------------------------------------------
-  @PutMapping("/{ticketNumber}")
+ /* @PutMapping("/{ticketNumber}")
   @PreAuthorize("hasRole('ADMIN')")
   @Transactional
   public ResponseEntity<ParentTicketDetails> updateParent(@PathVariable String ticketNumber,
-                                                          @RequestBody ParentTicketDetails patch) {
+                                                                    @RequestBody ParentTicketDetails patch) {
     var p = parentRepo.findByTicketNumberIgnoreCase(ticketNumber)
         .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
             org.springframework.http.HttpStatus.NOT_FOUND, "Ticket not found"));
@@ -107,13 +110,13 @@ public class TicketsAdminAndQueryController {
     p.setUpdatedBy(AuthUtils.currentEmail());
 
     return ResponseEntity.ok(parentRepo.save(p));
-  }
+  }*/
 
   // ------------------------------------------------------------
   // 5) Update child (upsert) at /dms/tickets/{ticketNumber}/{devType}
   // PUT body: TicketDetailsEntry (we’ll upsert the *latest* entry per devType)
   // ------------------------------------------------------------
-  @PutMapping("/{ticketNumber}/{devType}")
+ /* @PutMapping("/{ticketNumber}/{devType}")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
   @Transactional
   public ResponseEntity<TicketDetailsEntry> upsertChild(@PathVariable String ticketNumber,
@@ -131,7 +134,7 @@ public class TicketsAdminAndQueryController {
     e.setTicket(parent);             // ensure FK link
     e.setDevType(lane);              // force lane from path
     if (body.getAssignee() != null) e.setAssignee(body.getAssignee());
-    if (body.getEstimation() != null) e.setEstimation(body.getEstimation());
+    if (body.getEstimation() > 0) e.setEstimation(body.getEstimation());
     if (body.getStatus() != null) e.setStatus(body.getStatus());
     if (body.getStartDate() != null) e.setStartDate(body.getStartDate());
     if (body.getEndDate() != null) e.setEndDate(body.getEndDate());
@@ -142,7 +145,7 @@ public class TicketsAdminAndQueryController {
    // e.setUpdatedOn(LocalDateTime.parse(Instant.now().toString()));
 
     return ResponseEntity.ok(entryRepo.save(e));
-  }
+  }*/
 
   // ------------------------------------------------------------
   // 6) Delete ticket (parent) → cascades to child entries
@@ -202,7 +205,7 @@ public class TicketsAdminAndQueryController {
   // 7b) Instant “typeahead” suggestions that ALSO returns the same SearchRowDTOs
   // GET /dms/tickets/suggest?q=<prefix>&assignee=<optional>&limit=8
   // ------------------------------------------------------------
-  @GetMapping("/suggest")
+ /* @GetMapping("/suggest")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
   public ResponseEntity<List<SearchRowDTO>> suggest(
       @RequestParam(name = "q") String prefix,
@@ -226,16 +229,30 @@ public class TicketsAdminAndQueryController {
     }
 
     return ResponseEntity.ok(page.getContent().stream().map(this::toSearchRow).toList());
-  }
+  }*/
 
   // CREATE parent
-  @PostMapping
+  /*@PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ParentTicketDetails> create(@RequestBody ParentTicketDetails parentTicketDetails) {
     ParentTicketDetails saved = parentTicketService.createTicket(parentTicketDetails, AuthUtils.currentEmail());
     return ResponseEntity
             .created(URI.create("/dms/tickets/" + saved.getTicketNumber()))
             .body(saved);
+  }*/
+
+  @PostMapping
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<AdminAndEntryDto> createTicket(@RequestBody AdminAndEntryDto req) {
+      AdminAndEntryDto saved = entryService.createTicket(req, AuthUtils.currentEmail());
+      return ResponseEntity.ok(saved);
+  }
+
+  @PutMapping("/{ticketNumber}")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<AdminAndEntryDto> updateTicket(@PathVariable String ticketNumber,
+                                                       @RequestBody AdminAndEntryDto req) {
+    return ResponseEntity.ok(entryService.updateTicket(ticketNumber, req));
   }
 
   // ---------------- helpers / DTO mapping ----------------
@@ -308,18 +325,18 @@ public class TicketsAdminAndQueryController {
   ) {}
 
   public static record Child(
-      Long id,
-      String ticketNumber,
-      String devType,
-      String status,
-      String assignee,
-      String estimation,
-      String startDate,
-      String endDate,
-      String createdBy,
-      String createdOn,
-      String updatedBy,
-      String updatedOn
+          Long id,
+          String ticketNumber,
+          String devType,
+          String status,
+          String assignee,
+          long estimation,
+          String startDate,
+          String endDate,
+          String createdBy,
+          String createdOn,
+          String updatedBy,
+          String updatedOn
   ) {
     public static Child of(TicketDetailsEntry e) {
       return new Child(
@@ -341,13 +358,13 @@ public class TicketsAdminAndQueryController {
 
   // Search row shape you requested
   public static record SearchRowDTO(
-      String ticketNumber,
-      String devType,
-      Integer returnNumber,
-      Boolean returned,
-      String estimation,
-      String assignee,
-      String startDate,
-      String endDate
+          String ticketNumber,
+          String devType,
+          Integer returnNumber,
+          Boolean returned,
+          long estimation,
+          String assignee,
+          String startDate,
+          String endDate
   ) {}
 }
