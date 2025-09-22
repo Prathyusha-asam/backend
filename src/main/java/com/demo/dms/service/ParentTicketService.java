@@ -2,6 +2,7 @@ package com.demo.dms.service;
 
 import com.demo.dms.entity.ParentTicketDetails;
 import com.demo.dms.repository.ParentTicketDetailsRepository;
+import com.demo.dms.web.dto.TicketStats;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -71,5 +72,11 @@ public class ParentTicketService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ticket not found");
         }
         repo.deleteByTicketNumberIgnoreCase(ticketNumber); // cascades to children via FK
+    }
+
+    public TicketStats getStats() {
+        long total = repo.count();
+        long returned = repo.countByReturnedTrue(); // or countByReturnedTrue() / custom query
+        return new TicketStats(total, returned);
     }
 }

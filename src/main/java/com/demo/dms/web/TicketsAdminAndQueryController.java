@@ -8,6 +8,7 @@ import com.demo.dms.security.AuthUtils;
 import com.demo.dms.service.EntryService;
 import com.demo.dms.service.ParentTicketService;
 import com.demo.dms.web.dto.AdminAndEntryDto;
+import com.demo.dms.web.dto.TicketStats;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -253,6 +254,12 @@ public class TicketsAdminAndQueryController {
   public ResponseEntity<AdminAndEntryDto> updateTicket(@PathVariable String ticketNumber,
                                                        @RequestBody AdminAndEntryDto req) {
     return ResponseEntity.ok(entryService.updateTicket(ticketNumber, req));
+  }
+
+  @GetMapping(value = "/stats", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<TicketStats> stats() {
+    return ResponseEntity.ok(parentTicketService.getStats());
   }
 
   // ---------------- helpers / DTO mapping ----------------

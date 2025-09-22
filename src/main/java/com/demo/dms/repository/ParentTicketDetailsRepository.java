@@ -13,4 +13,6 @@ public interface ParentTicketDetailsRepository extends JpaRepository<ParentTicke
     void deleteByTicketNumberIgnoreCase(String ticketNumber);
     Page<ParentTicketDetails> findAll(Pageable pageable);
     ParentTicketDetails save(ParentTicketDetails parentTicketDetails);
+
+    long countByReturnedTrue();
 }
