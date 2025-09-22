@@ -266,7 +266,7 @@ public class TicketsAdminAndQueryController {
   // ======================= DTOs ==========================
   public static record AdminAggregateDTO(
       Parent parent,
-      Map<String, List<Child>> childrenByDevType
+      Map<String, List<Child>> childrenByTicketNumber
   ) {
     public AdminAggregateDTO(ParentTicketDetails p, List<TicketDetailsEntry> children) {
       this(
@@ -275,7 +275,7 @@ public class TicketsAdminAndQueryController {
               p.isReturned(), p.getReturnedNumber()),
           children.stream()
               .map(Child::of)
-              .collect(Collectors.groupingBy(Child::devType, LinkedHashMap::new, Collectors.toList()))
+              .collect(Collectors.groupingBy(Child::ticketNumber, LinkedHashMap::new, Collectors.toList()))
       );
     }
   }
@@ -309,6 +309,7 @@ public class TicketsAdminAndQueryController {
 
   public static record Child(
       Long id,
+      String ticketNumber,
       String devType,
       String status,
       String assignee,
@@ -323,6 +324,7 @@ public class TicketsAdminAndQueryController {
     public static Child of(TicketDetailsEntry e) {
       return new Child(
           e.getId(),
+          e.getTicketNumber(),
           e.getDevType(),
           e.getStatus(),
           e.getAssignee(),
