@@ -46,6 +46,7 @@ public class EntryService {
             TicketDetailsEntry child = setTicketDetailsEntry(c, parent);
             child.setCreatedOn(LocalDateTime.now());
             child.setCreatedBy(email);
+            child.setComments(c.getComments());
             repo.save(child);
         }
 
@@ -88,6 +89,7 @@ public class EntryService {
             child.setEndDate(c.getEndDate());
             child.setUpdatedBy(AuthUtils.currentEmail());
             child.setUpdatedOn(LocalDateTime.now());
+            child.setComments(c.getComments());
             repo.save(child);
         }
         parentRepo.save(existing);

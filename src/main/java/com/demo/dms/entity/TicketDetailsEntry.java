@@ -55,6 +55,9 @@ public class TicketDetailsEntry {
     @Column(name = "Updated_On", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
+    @Column(name = "Comments")
+    private String comments;
+
     // Convenience accessors if you often need the raw Ticket_Number
     @Transient
     public String getTicketNumber() {
@@ -155,5 +158,13 @@ public class TicketDetailsEntry {
 
     public void setUpdatedOn(LocalDateTime updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

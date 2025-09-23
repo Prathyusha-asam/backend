@@ -244,9 +244,10 @@ public class TicketsAdminAndQueryController {
           String startDate,
           String endDate,
           String createdBy,
-          String createdOn,
+          LocalDateTime createdOn,
           String updatedBy,
-          String updatedOn
+          LocalDateTime updatedOn,
+          String comments
   ) {
     public static Child of(TicketDetailsEntry e) {
       return new Child(
@@ -259,9 +260,10 @@ public class TicketsAdminAndQueryController {
           e.getStartDate(),
           e.getEndDate(),
           e.getCreatedBy(),
-          String.valueOf(e.getCreatedOn()),
+          e.getCreatedOn(),
           e.getUpdatedBy(),
-          String.valueOf(e.getUpdatedOn())
+          e.getUpdatedOn(),
+          e.getComments()
       );
     }
   }

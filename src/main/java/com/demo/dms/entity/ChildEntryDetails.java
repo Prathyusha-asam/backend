@@ -20,6 +20,7 @@ public class ChildEntryDetails {
     String createdBy;
     LocalDateTime updatedOn;
     String updatedBy;
+    String comments;
 
     public String getTicketNumber() {
         return ticketNumber;
@@ -107,5 +108,13 @@ public class ChildEntryDetails {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }
