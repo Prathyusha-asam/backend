@@ -74,7 +74,6 @@ public class EntryService {
             String newStatus = c.getStatus().toLowerCase();
             if("QA".contains(devType) &&
                     "testing".equals(oldStatus) && "ready-to-dev".equals(newStatus)) {
-                System.out.println("existing ticket number " + existing.getReturnedNumber());
                 existing.setReturnedNumber(existing.getReturnedNumber()+1);
                 existing.setReturned(true);
             }
