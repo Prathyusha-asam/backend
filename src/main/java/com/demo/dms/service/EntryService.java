@@ -2,7 +2,6 @@ package com.demo.dms.service;
 
 import com.demo.dms.entity.ChildEntryDetails;
 import com.demo.dms.entity.ParentTicketDetails;
-import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.entity.TicketDetailsEntry;
 import com.demo.dms.repository.ParentTicketDetailsRepository;
 import com.demo.dms.repository.TicketDetailsEntryRepository;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

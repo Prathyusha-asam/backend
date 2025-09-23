@@ -87,66 +87,6 @@ public class TicketsAdminAndQueryController {
     return ResponseEntity.ok(new LaneAggregateDTO(p.get(), lane, entries));
   }
 
-  // ------------------------------------------------------------
-  // 4) ADMIN: Update parent (by ticketNumber)
-  // PUT /dms/tickets/{ticketNumber}
-  // Body: ParentTicketDetails (fields to overwrite if non-null)
-  // ------------------------------------------------------------
- /* @PutMapping("/{ticketNumber}")
-  @PreAuthorize("hasRole('ADMIN')")
-  @Transactional
-  public ResponseEntity<ParentTicketDetails> updateParent(@PathVariable String ticketNumber,
-                                                                    @RequestBody ParentTicketDetails patch) {
-    var p = parentRepo.findByTicketNumberIgnoreCase(ticketNumber)
-        .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
-            org.springframework.http.HttpStatus.NOT_FOUND, "Ticket not found"));
-
-    // update only non-null fields (simple merge)
-    if (patch.getTicketType() != null) p.setTicketType(patch.getTicketType());
-    if (patch.isReturned()) p.setReturned(patch.isReturned());
-    if (patch.getReturnedNumber() < 0) p.setReturnedNumber(patch.getReturnedNumber());
-    if (patch.getCreatedBy() != null) p.setCreatedBy(patch.getCreatedBy());
-    if (patch.getUpdatedBy() != null) p.setUpdatedBy(patch.getUpdatedBy());
-    p.setUpdatedOn(LocalDateTime.now());
-    p.setUpdatedBy(AuthUtils.currentEmail());
-
-    return ResponseEntity.ok(parentRepo.save(p));
-  }*/
-
-  // ------------------------------------------------------------
-  // 5) Update child (upsert) at /dms/tickets/{ticketNumber}/{devType}
-  // PUT body: TicketDetailsEntry (we’ll upsert the *latest* entry per devType)
-  // ------------------------------------------------------------
- /* @PutMapping("/{ticketNumber}/{devType}")
-  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
-  @Transactional
-  public ResponseEntity<TicketDetailsEntry> upsertChild(@PathVariable String ticketNumber,
-                                                        @PathVariable String devType,
-                                                        @RequestBody TicketDetailsEntry body) {
-    var parent = parentRepo.findByTicketNumberIgnoreCase(ticketNumber)
-        .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
-            org.springframework.http.HttpStatus.NOT_FOUND, "Ticket not found"));
-
-    String lane = normalizeLane(devType);
-
-    var existingOpt = entryRepo.findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc(ticketNumber, lane);
-    TicketDetailsEntry e = existingOpt.orElseGet(TicketDetailsEntry::new);
-
-    e.setTicket(parent);             // ensure FK link
-    e.setDevType(lane);              // force lane from path
-    if (body.getAssignee() != null) e.setAssignee(body.getAssignee());
-    if (body.getEstimation() > 0) e.setEstimation(body.getEstimation());
-    if (body.getStatus() != null) e.setStatus(body.getStatus());
-    if (body.getStartDate() != null) e.setStartDate(body.getStartDate());
-    if (body.getEndDate() != null) e.setEndDate(body.getEndDate());
-    if (body.getCreatedBy() != null) e.setCreatedBy(body.getCreatedBy());
-    e.setAssignee(AuthUtils.currentEmail());
-    e.setUpdatedBy(AuthUtils.currentEmail());
-    e.setCreatedBy(AuthUtils.currentEmail());
-   // e.setUpdatedOn(LocalDateTime.parse(Instant.now().toString()));
-
-    return ResponseEntity.ok(entryRepo.save(e));
-  }*/
 
   // ------------------------------------------------------------
   // 6) Delete ticket (parent) → cascades to child entries
@@ -160,47 +100,6 @@ public class TicketsAdminAndQueryController {
     parentRepo.deleteByTicketNumberIgnoreCase(ticketNumber);
     return ResponseEntity.noContent().build();
   }
-
-
-  // ------------------------------------------------------------
-  // 7b) Instant “typeahead” suggestions that ALSO returns the same SearchRowDTOs
-  // GET /dms/tickets/suggest?q=<prefix>&assignee=<optional>&limit=8
-  // ------------------------------------------------------------
- /* @GetMapping("/suggest")
-  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
-  public ResponseEntity<List<SearchRowDTO>> suggest(
-      @RequestParam(name = "q") String prefix,
-      @RequestParam(required = false) String assignee,
-      @RequestParam(defaultValue = "8") int limit) {
-
-    if (!StringUtils.hasText(prefix)) return ResponseEntity.ok(List.of());
-
-    int capped = Math.min(Math.max(limit, 1), 20);
-    var pr = PageRequest.of(0, capped);
-
-    Page<TicketDetailsEntry> page;
-    if (StringUtils.hasText(assignee)) {
-      // If you don’t have this repo method, call
-      // findByTicket_TicketNumberStartingWithIgnoreCase(prefix, pr)
-      // and then filter in memory by assignee (less efficient)
-      page = entryRepo.findByAssigneeIgnoreCaseAndTicket_TicketNumberStartingWithIgnoreCase(
-          assignee.trim(), prefix.trim(), pr);
-    } else {
-      page = entryRepo.findByTicket_TicketNumberStartingWithIgnoreCase(prefix.trim(), pr);
-    }
-
-    return ResponseEntity.ok(page.getContent().stream().map(this::toSearchRow).toList());
-  }*/
-
-  // CREATE parent
-  /*@PostMapping
-  @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<ParentTicketDetails> create(@RequestBody ParentTicketDetails parentTicketDetails) {
-    ParentTicketDetails saved = parentTicketService.createTicket(parentTicketDetails, AuthUtils.currentEmail());
-    return ResponseEntity
-            .created(URI.create("/dms/tickets/" + saved.getTicketNumber()))
-            .body(saved);
-  }*/
 
   @PostMapping
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
@@ -381,4 +280,107 @@ public class TicketsAdminAndQueryController {
           String startDate,
           String endDate
   ) {}
+
+
+
+  // ------------------------------------------------------------
+  // 4) ADMIN: Update parent (by ticketNumber)
+  // PUT /dms/tickets/{ticketNumber}
+  // Body: ParentTicketDetails (fields to overwrite if non-null)
+  // ------------------------------------------------------------
+ /* @PutMapping("/{ticketNumber}")
+  @PreAuthorize("hasRole('ADMIN')")
+  @Transactional
+  public ResponseEntity<ParentTicketDetails> updateParent(@PathVariable String ticketNumber,
+                                                                    @RequestBody ParentTicketDetails patch) {
+    var p = parentRepo.findByTicketNumberIgnoreCase(ticketNumber)
+        .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+            org.springframework.http.HttpStatus.NOT_FOUND, "Ticket not found"));
+
+    // update only non-null fields (simple merge)
+    if (patch.getTicketType() != null) p.setTicketType(patch.getTicketType());
+    if (patch.isReturned()) p.setReturned(patch.isReturned());
+    if (patch.getReturnedNumber() < 0) p.setReturnedNumber(patch.getReturnedNumber());
+    if (patch.getCreatedBy() != null) p.setCreatedBy(patch.getCreatedBy());
+    if (patch.getUpdatedBy() != null) p.setUpdatedBy(patch.getUpdatedBy());
+    p.setUpdatedOn(LocalDateTime.now());
+    p.setUpdatedBy(AuthUtils.currentEmail());
+
+    return ResponseEntity.ok(parentRepo.save(p));
+  }*/
+
+  // ------------------------------------------------------------
+  // 5) Update child (upsert) at /dms/tickets/{ticketNumber}/{devType}
+  // PUT body: TicketDetailsEntry (we’ll upsert the *latest* entry per devType)
+  // ------------------------------------------------------------
+ /* @PutMapping("/{ticketNumber}/{devType}")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  @Transactional
+  public ResponseEntity<TicketDetailsEntry> upsertChild(@PathVariable String ticketNumber,
+                                                        @PathVariable String devType,
+                                                        @RequestBody TicketDetailsEntry body) {
+    var parent = parentRepo.findByTicketNumberIgnoreCase(ticketNumber)
+        .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+            org.springframework.http.HttpStatus.NOT_FOUND, "Ticket not found"));
+
+    String lane = normalizeLane(devType);
+
+    var existingOpt = entryRepo.findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc(ticketNumber, lane);
+    TicketDetailsEntry e = existingOpt.orElseGet(TicketDetailsEntry::new);
+
+    e.setTicket(parent);             // ensure FK link
+    e.setDevType(lane);              // force lane from path
+    if (body.getAssignee() != null) e.setAssignee(body.getAssignee());
+    if (body.getEstimation() > 0) e.setEstimation(body.getEstimation());
+    if (body.getStatus() != null) e.setStatus(body.getStatus());
+    if (body.getStartDate() != null) e.setStartDate(body.getStartDate());
+    if (body.getEndDate() != null) e.setEndDate(body.getEndDate());
+    if (body.getCreatedBy() != null) e.setCreatedBy(body.getCreatedBy());
+    e.setAssignee(AuthUtils.currentEmail());
+    e.setUpdatedBy(AuthUtils.currentEmail());
+    e.setCreatedBy(AuthUtils.currentEmail());
+   // e.setUpdatedOn(LocalDateTime.parse(Instant.now().toString()));
+
+    return ResponseEntity.ok(entryRepo.save(e));
+  }*/
+
+  // ------------------------------------------------------------
+  // 7b) Instant “typeahead” suggestions that ALSO returns the same SearchRowDTOs
+  // GET /dms/tickets/suggest?q=<prefix>&assignee=<optional>&limit=8
+  // ------------------------------------------------------------
+ /* @GetMapping("/suggest")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<List<SearchRowDTO>> suggest(
+      @RequestParam(name = "q") String prefix,
+      @RequestParam(required = false) String assignee,
+      @RequestParam(defaultValue = "8") int limit) {
+
+    if (!StringUtils.hasText(prefix)) return ResponseEntity.ok(List.of());
+
+    int capped = Math.min(Math.max(limit, 1), 20);
+    var pr = PageRequest.of(0, capped);
+
+    Page<TicketDetailsEntry> page;
+    if (StringUtils.hasText(assignee)) {
+      // If you don’t have this repo method, call
+      // findByTicket_TicketNumberStartingWithIgnoreCase(prefix, pr)
+      // and then filter in memory by assignee (less efficient)
+      page = entryRepo.findByAssigneeIgnoreCaseAndTicket_TicketNumberStartingWithIgnoreCase(
+          assignee.trim(), prefix.trim(), pr);
+    } else {
+      page = entryRepo.findByTicket_TicketNumberStartingWithIgnoreCase(prefix.trim(), pr);
+    }
+
+    return ResponseEntity.ok(page.getContent().stream().map(this::toSearchRow).toList());
+  }*/
+
+  // CREATE parent
+  /*@PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<ParentTicketDetails> create(@RequestBody ParentTicketDetails parentTicketDetails) {
+    ParentTicketDetails saved = parentTicketService.createTicket(parentTicketDetails, AuthUtils.currentEmail());
+    return ResponseEntity
+            .created(URI.create("/dms/tickets/" + saved.getTicketNumber()))
+            .body(saved);
+  }*/
 }
