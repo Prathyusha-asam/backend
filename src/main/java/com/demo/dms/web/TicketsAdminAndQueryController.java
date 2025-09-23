@@ -161,46 +161,6 @@ public class TicketsAdminAndQueryController {
     return ResponseEntity.noContent().build();
   }
 
-  // ------------------------------------------------------------
-  // 7) Search API (paged)
-  // GET /dms/tickets/search?assignee=&ticketNumber=
-  //
-  // Returns rows shaped as:
-  //  TicketNumber, DevType, ReturnNumber, Returned, Estimation, Assignee, StartDate, EndDate
-  //
-  // Rules:
-  //  - If assignee provided → filter by assignee (case-insensitive exact)
-  //  - If ticketNumber typing → starts-with on ticketNumber (instant-friendly)
-  //  - If both provided → apply both filters
-  //  - If neither → all child rows
-  // ------------------------------------------------------------
-  @GetMapping("/search")
-  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
-  public ResponseEntity<Page<SearchRowDTO>> search(
-      @RequestParam(required = false) String assignee,
-      @RequestParam(required = false) String ticketNumber,
-      Pageable pageable) {
-
-    boolean hasAssignee = StringUtils.hasText(assignee);
-    boolean hasTicket = StringUtils.hasText(ticketNumber);
-
-    Page<TicketDetailsEntry> page;
-
-    if (hasAssignee && hasTicket) {
-      page = entryRepo.findByAssigneeIgnoreCaseAndTicket_TicketNumberStartingWithIgnoreCase(
-          assignee.trim(), ticketNumber.trim(), pageable);
-    } else if (hasAssignee) {
-      page = entryRepo.findByAssigneeIgnoreCase(assignee.trim(), pageable);
-    } else if (hasTicket) {
-      page = entryRepo.findByTicket_TicketNumberStartingWithIgnoreCase(ticketNumber.trim(), pageable);
-    } else {
-      // all child rows
-      page = entryRepo.findAll(pageable);
-    }
-
-    List<SearchRowDTO> rows = page.getContent().stream().map(this::toSearchRow).toList();
-    return ResponseEntity.ok(new PageImpl<>(rows, pageable, page.getTotalElements()));
-  }
 
   // ------------------------------------------------------------
   // 7b) Instant “typeahead” suggestions that ALSO returns the same SearchRowDTOs
@@ -256,6 +216,47 @@ public class TicketsAdminAndQueryController {
     return ResponseEntity.ok(entryService.updateTicket(ticketNumber, req));
   }
 
+  // ------------------------------------------------------------
+  // 7) Search API (paged)
+  // GET /dms/tickets/search?assignee=&ticketNumber=
+  //
+  // Returns rows shaped as:
+  //  TicketNumber, DevType, ReturnNumber, Returned, Estimation, Assignee, StartDate, EndDate
+  //
+  // Rules:
+  //  - If assignee provided → filter by assignee (case-insensitive exact)
+  //  - If ticketNumber typing → starts-with on ticketNumber (instant-friendly)
+  //  - If both provided → apply both filters
+  //  - If neither → all child rows
+  // ------------------------------------------------------------
+  @GetMapping("/search")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<Page<SearchRowDTO>> search(
+          @RequestParam(required = false) String assignee,
+          @RequestParam(required = false) String ticketNumber,
+          Pageable pageable) {
+
+    boolean hasAssignee = StringUtils.hasText(assignee);
+    boolean hasTicket = StringUtils.hasText(ticketNumber);
+
+    Page<TicketDetailsEntry> page;
+
+    if (hasAssignee && hasTicket) {
+      page = entryRepo.findByAssigneeIgnoreCaseAndTicket_TicketNumberStartingWithIgnoreCase(
+              assignee.trim(), ticketNumber.trim(), pageable);
+    } else if (hasAssignee) {
+      page = entryRepo.findByAssigneeIgnoreCase(assignee.trim(), pageable);
+    } else if (hasTicket) {
+      page = entryRepo.findByTicket_TicketNumberStartingWithIgnoreCase(ticketNumber.trim(), pageable);
+    } else {
+      // all child rows
+      page = entryRepo.findAll(pageable);
+    }
+
+    List<SearchRowDTO> rows = page.getContent().stream().map(this::toSearchRow).toList();
+    return ResponseEntity.ok(new PageImpl<>(rows, pageable, page.getTotalElements()));
+  }
+
   @GetMapping(value = "/stats", produces = "application/json")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
   public ResponseEntity<TicketStats> stats() {
@@ -277,7 +278,10 @@ public class TicketsAdminAndQueryController {
     var p = e.getTicket(); // requires @ManyToOne mapping on TICKET_NUMBER
     return new SearchRowDTO(
         p != null ? p.getTicketNumber() : null,
+        p != null ? p.getDevType() : null,
+        p != null ? p.getTicketType() : null,
         e.getDevType(),
+        e.getStatus(),
         p != null ? p.getReturnedNumber() : null,
         p != null ? p.isReturned() : null,
         e.getEstimation(),
@@ -366,7 +370,10 @@ public class TicketsAdminAndQueryController {
   // Search row shape you requested
   public static record SearchRowDTO(
           String ticketNumber,
-          String devType,
+          String parentDevType,
+          String ticketType,
+          String childDevType,
+          String childStatus,
           Integer returnNumber,
           Boolean returned,
           long estimation,
