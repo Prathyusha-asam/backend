@@ -27,11 +27,6 @@ public class LogController {
         this.logRepository = logRepository;
     }
 
-    @GetMapping(produces = "application/json")
-    public ResponseEntity<Page<Log>> findAll(Pageable pageable) {
-        return ResponseEntity.ok(logService.getHistory(pageable));
-    }
-
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
     public ResponseEntity<Page<Log>> search(@RequestParam(required = false, name = "email") String createdBy,
