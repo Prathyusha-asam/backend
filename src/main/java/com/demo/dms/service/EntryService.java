@@ -2,6 +2,7 @@ package com.demo.dms.service;
 
 import com.demo.dms.entity.ChildEntryDetails;
 import com.demo.dms.entity.ParentTicketDetails;
+import com.demo.dms.entity.TicketDetails;
 import com.demo.dms.entity.TicketDetailsEntry;
 import com.demo.dms.repository.ParentTicketDetailsRepository;
 import com.demo.dms.repository.TicketDetailsEntryRepository;
@@ -64,18 +65,13 @@ public class EntryService {
         existing.setUpdatedOn(LocalDateTime.now());
         existing.setUpdatedBy(AuthUtils.currentEmail());
         parentRepo.save(existing);
-        Optional<ParentTicketDetails> p = parentRepo.findByTicketNumberIgnoreCase(existing.getTicketNumber());
-        req.setCreatedBy(p.get().getCreatedBy());
-        req.setCreatedOn(p.get().getCreatedOn());
-        req.setUpdatedOn(p.get().getUpdatedOn());
-        req.setUpdatedBy(p.get().getUpdatedBy());
 
         List<ChildEntryDetails> entries = req.getEntries();
         for(ChildEntryDetails c : entries) {
-            c.setTicketNumber(req.getTicketNumber());
-            c.setCreatedOn(LocalDateTime.now());
-
-            TicketDetailsEntry child = setTicketDetailsEntry(c, existing);
+            TicketDetailsEntry child = repo.
+                    findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc
+                            (req.getTicketNumber(), c.getDevType());
+            child.setCreatedOn(LocalDateTime.now());
             child.setUpdatedOn(c.getUpdatedOn());
             child.setUpdatedBy(c.getUpdatedBy());
             child.setTicket(existing);

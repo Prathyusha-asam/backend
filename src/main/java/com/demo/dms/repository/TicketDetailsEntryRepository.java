@@ -15,7 +15,7 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
 
     // by parent ticket number + dev type
     List<TicketDetailsEntry> findByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCase(String ticketNumber, String devType);
-    Optional<TicketDetailsEntry> findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc(String ticketNumber, String devType);
+    TicketDetailsEntry findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc(String ticketNumber, String devType);
 
     // helpful for search screens
     Page<TicketDetailsEntry> findByAssigneeIgnoreCase(String assignee, Pageable pageable);
