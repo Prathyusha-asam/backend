@@ -69,12 +69,13 @@ public class EntryService {
             TicketDetailsEntry child = repo.
                     findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc
                             (req.getTicketNumber(), c.getDevType());
-            String devType = c.getDevType().toUpperCase();
+            String devType = child.getDevType().toUpperCase();
             String oldStatus = child.getStatus().toLowerCase();
             String newStatus = c.getStatus().toLowerCase();
             if("QA".contains(devType) &&
                     "testing".equals(oldStatus) && "ready-to-dev".equals(newStatus)) {
-                existing.setTicketNumber(existing.getTicketNumber()+1);
+                System.out.println("existing ticket number " + existing.getReturnedNumber());
+                existing.setReturnedNumber(existing.getReturnedNumber()+1);
                 existing.setReturned(true);
             }
             child.setUpdatedOn(LocalDateTime.now());
