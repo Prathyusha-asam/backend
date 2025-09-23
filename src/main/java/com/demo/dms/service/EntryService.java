@@ -62,13 +62,21 @@ public class EntryService {
         existing.setReturned(req.isReturned());
         existing.setUpdatedOn(LocalDateTime.now());
         existing.setUpdatedBy(AuthUtils.currentEmail());
-        parentRepo.save(existing);
+
 
         List<ChildEntryDetails> entries = req.getEntries();
         for(ChildEntryDetails c : entries) {
             TicketDetailsEntry child = repo.
                     findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc
                             (req.getTicketNumber(), c.getDevType());
+            String devType = c.getDevType().toUpperCase();
+            String oldStatus = child.getStatus().toLowerCase();
+            String newStatus = c.getStatus().toLowerCase();
+            if("QA".contains(devType) &&
+                    "testing".equals(oldStatus) && "ready-to-dev".equals(newStatus)) {
+                existing.setTicketNumber(existing.getTicketNumber()+1);
+                existing.setReturned(true);
+            }
             child.setUpdatedOn(LocalDateTime.now());
             child.setUpdatedBy(AuthUtils.currentEmail());
             child.setTicket(existing);
@@ -82,6 +90,7 @@ public class EntryService {
             child.setUpdatedOn(LocalDateTime.now());
             repo.save(child);
         }
+        parentRepo.save(existing);
         return req;
     }
 
