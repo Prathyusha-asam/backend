@@ -79,13 +79,6 @@ public class TicketDetailsService {
         existing.setDevType(body.getDevType());
         existing.setStatus(body.getStatus());
         existing.setEstimation(body.getEstimation());
-
-        if(existing.isReturned()) {
-            existing.setReturnNumber(body.getReturnNumber()+1);
-        } else {
-            existing.setReturnNumber(body.getReturnNumber());
-        }
-
         existing.setReturned(isReturned);
         existing.setAssignee(body.getAssignee());
         existing.setStartDate(body.getStartDate());
