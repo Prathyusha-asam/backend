@@ -45,9 +45,9 @@ public class EntryService {
 
         List<ChildEntryDetails> entries = req.getEntries();
         for(ChildEntryDetails c : entries) {
-            c.setTicketNumber(req.getTicketNumber());
-            c.setCreatedOn(LocalDateTime.now());
             TicketDetailsEntry child = setTicketDetailsEntry(c, parent);
+            child.setCreatedOn(LocalDateTime.now());
+            child.setCreatedBy(email);
             repo.save(child);
         }
 
@@ -71,9 +71,8 @@ public class EntryService {
             TicketDetailsEntry child = repo.
                     findTopByTicket_TicketNumberIgnoreCaseAndDevTypeIgnoreCaseOrderByIdDesc
                             (req.getTicketNumber(), c.getDevType());
-            child.setCreatedOn(LocalDateTime.now());
-            child.setUpdatedOn(c.getUpdatedOn());
-            child.setUpdatedBy(c.getUpdatedBy());
+            child.setUpdatedOn(LocalDateTime.now());
+            child.setUpdatedBy(AuthUtils.currentEmail());
             child.setTicket(existing);
             child.setDevType(c.getDevType());
             child.setAssignee(c.getAssignee());
