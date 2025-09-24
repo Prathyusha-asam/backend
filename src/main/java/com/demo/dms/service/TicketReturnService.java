@@ -37,6 +37,9 @@ public class TicketReturnService {
     }
 
     public Page<TicketReturn> findByTicketEntryId(long id, Pageable page) {
+        ticketDetailsEntryRepository.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND, "Entry not found for " + id));
         return ticketReturnRepository.findByTicketEntryId(id, page);
     }
 }
