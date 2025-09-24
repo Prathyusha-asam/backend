@@ -58,6 +58,13 @@ public class TicketDetailsEntry {
     @Column(name = "Comments")
     private String comments;
 
+    @Column(name = "Returned")
+    private boolean returned;
+
+    @Column(name = "Returned_Number")
+    private int returnedNumber;
+
+
     // Convenience accessors if you often need the raw Ticket_Number
     @Transient
     public String getTicketNumber() {
@@ -166,5 +173,21 @@ public class TicketDetailsEntry {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public boolean isReturned() {
+        return returned;
+    }
+
+    public void setReturned(boolean returned) {
+        this.returned = returned;
+    }
+
+    public int getReturnedNumber() {
+        return returnedNumber;
+    }
+
+    public void setReturnedNumber(int returnedNumber) {
+        this.returnedNumber = returnedNumber;
     }
 }

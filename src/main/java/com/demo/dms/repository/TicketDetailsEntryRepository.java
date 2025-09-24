@@ -22,4 +22,5 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
     Page<TicketDetailsEntry> findByTicket_TicketNumberStartingWithIgnoreCase(String prefix, Pageable pageable);
     Page<TicketDetailsEntry> findByAssigneeIgnoreCaseAndTicket_TicketNumberStartingWithIgnoreCase(String assignee, String prefix, Pageable pageable);
     Page<TicketDetailsEntry> findByTicket_TicketNumberStartingWithIgnoreCaseAndAssigneeIgnoreCase(String prefix, String assignee, Pageable pageable);
+    Optional<TicketDetailsEntry> findById(long id);
 }
