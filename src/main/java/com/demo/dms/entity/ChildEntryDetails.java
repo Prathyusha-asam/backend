@@ -21,6 +21,9 @@ public class ChildEntryDetails {
     LocalDateTime updatedOn;
     String updatedBy;
     String comments;
+    boolean returned;
+    long returnedNumber;
+
 
     public String getTicketNumber() {
         return ticketNumber;
@@ -116,5 +119,21 @@ public class ChildEntryDetails {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public boolean isReturned() {
+        return returned;
+    }
+
+    public void setReturned(boolean returned) {
+        this.returned = returned;
+    }
+
+    public long getReturnedNumber() {
+        return returnedNumber;
+    }
+
+    public void setReturnedNumber(long returnedNumber) {
+        this.returnedNumber = returnedNumber;
     }
 }
