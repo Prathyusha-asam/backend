@@ -247,7 +247,9 @@ public class TicketsAdminAndQueryController {
           LocalDateTime createdOn,
           String updatedBy,
           LocalDateTime updatedOn,
-          String comments
+          String comments,
+          boolean returned,
+          int returnedNumber
   ) {
     public static Child of(TicketDetailsEntry e) {
       return new Child(
@@ -263,7 +265,9 @@ public class TicketsAdminAndQueryController {
           e.getCreatedOn(),
           e.getUpdatedBy(),
           e.getUpdatedOn(),
-          e.getComments()
+          e.getComments(),
+          e.isReturned(),
+          e.getReturnedNumber()
       );
     }
   }
