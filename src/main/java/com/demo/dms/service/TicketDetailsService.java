@@ -91,13 +91,6 @@ public class TicketDetailsService {
         return ticketDetailsRepository.save(existing);
     }
 
-    @Transactional(readOnly = true)
-    public TicketStats getStats() {
-        long total = ticketDetailsRepository.count();
-        long returned = ticketDetailsRepository.countByReturnedTrue(); // or countByReturnedTrue() / custom query
-        return new TicketStats(total, returned);
-    }
-
     @Transactional
     public void deleteByIds(List<Long> ids) {
         ticketDetailsRepository.deleteAllByIdInBatch(ids);

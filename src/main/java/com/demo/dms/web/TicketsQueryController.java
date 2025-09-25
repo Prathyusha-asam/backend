@@ -40,11 +40,6 @@ public class TicketsQueryController {
     return out == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(out);
   }
 
-  @GetMapping(value = "/stats", produces = "application/json")
-  public ResponseEntity<TicketStats> stats() {
-    return ResponseEntity.ok(ticketDetailsService.getStats());
-  }
-
   // GET /dms/tickets/suggest?q=<optional>&assignee=<optional>&limit=8
   @GetMapping("/suggest")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")

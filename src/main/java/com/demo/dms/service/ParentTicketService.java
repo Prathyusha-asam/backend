@@ -2,6 +2,7 @@ package com.demo.dms.service;
 
 import com.demo.dms.entity.ParentTicketDetails;
 import com.demo.dms.repository.ParentTicketDetailsRepository;
+import com.demo.dms.repository.TicketDetailsEntryRepository;
 import com.demo.dms.web.dto.TicketStats;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,11 @@ public class ParentTicketService {
 
     private final ParentTicketDetailsRepository repo;
 
-    public ParentTicketService(ParentTicketDetailsRepository repo) {
+    private final TicketDetailsEntryRepository childRepo;
+
+    public ParentTicketService(ParentTicketDetailsRepository repo, TicketDetailsEntryRepository childRepo) {
         this.repo = repo;
+        this.childRepo = childRepo;
     }
 
     public Page<ParentTicketDetails> list(Pageable pageable) {
@@ -76,7 +80,8 @@ public class ParentTicketService {
 
     public TicketStats getStats() {
         long total = repo.count();
-        long returned = repo.countByReturnedTrue(); // or countByReturnedTrue() / custom query
-        return new TicketStats(total, returned);
+        long backendReturned = childRepo.countBackendReturns(); // or countByReturnedTrue() / custom query
+        long frontendReturned = childRepo.countFrontendReturns();
+        return new TicketStats(total, backendReturned, frontendReturned);
     }
 }

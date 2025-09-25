@@ -57,11 +57,6 @@ public class TicketDetailsController_old {
         return ResponseEntity.ok(updated);
     }
 
-    @GetMapping(value = "/ticket-details/stats", produces = "application/json")
-    public ResponseEntity<TicketStats> stats() {
-        return ResponseEntity.ok(ticketDetailsService.getStats());
-    }
-
     // (Optional) BULK DELETE: /dms/ticket-details?ids=1,2,3
     @DeleteMapping(value = "/ticket-details")
     public ResponseEntity<Void> deleteMany(@RequestParam("ids") List<Long> ids) {
