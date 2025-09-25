@@ -30,4 +30,10 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
 
     @Query("SELECT COUNT(c) FROM TicketDetailsEntry c WHERE c.devType = 'Backend' AND c.returned = true")
     long countBackendReturns();
+
+    @Query("SELECT c FROM TicketDetailsEntry c WHERE c.devType = 'Frontend' AND c.returned = true")
+    List<TicketDetailsEntry> returnDetailsForFrontend();
+
+    @Query("SELECT c FROM TicketDetailsEntry c WHERE c.devType = 'Backend' AND c.returned = true")
+    List<TicketDetailsEntry> returnDetailsForBackend();
 }

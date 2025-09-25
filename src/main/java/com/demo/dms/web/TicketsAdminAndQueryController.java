@@ -162,6 +162,18 @@ public class TicketsAdminAndQueryController {
     return ResponseEntity.ok(parentTicketService.getStats());
   }
 
+  @GetMapping(value = "/frontendReturn", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<List<TicketDetailsEntry>> frontEndReturnDetails() {
+    return ResponseEntity.ok(entryRepo.returnDetailsForFrontend());
+  }
+
+  @GetMapping(value = "/backendReturn", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<List<TicketDetailsEntry>> backEndReturnDetails() {
+    return ResponseEntity.ok(entryRepo.returnDetailsForBackend());
+  }
+
   // ---------------- helpers / DTO mapping ----------------
 
   private String normalizeLane(String devType) {
