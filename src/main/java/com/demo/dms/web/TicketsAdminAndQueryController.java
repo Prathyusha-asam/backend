@@ -249,7 +249,7 @@ public class TicketsAdminAndQueryController {
           LocalDateTime updatedOn,
           String comments,
           boolean returned,
-          int returnedNumber
+          Integer returnedNumber
   ) {
     public static Child of(TicketDetailsEntry e) {
       return new Child(
