@@ -11,10 +11,12 @@ import com.demo.dms.web.dto.AdminAndEntryDto;
 import com.demo.dms.web.dto.TicketStats;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -162,17 +164,30 @@ public class TicketsAdminAndQueryController {
     return ResponseEntity.ok(parentTicketService.getStats());
   }
 
-  @GetMapping(value = "/frontendReturn", produces = "application/json")
+  @GetMapping(value = "/returnDetails", produces = "application/json")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
-  public ResponseEntity<List<TicketDetailsEntry>> frontEndReturnDetails() {
-    return ResponseEntity.ok(entryRepo.returnDetailsForFrontend());
+  public ResponseEntity<List<TicketDetailsEntry>> returnDetails(
+          @RequestParam(required = true, name = "devType") String devType) {
+
+    List<String> validDevTypes = Arrays.asList("Frontend", "Backend");
+
+    // 2. Validate the input parameter
+    if (devType == null || !validDevTypes.contains(devType)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Dev-type");
+    }
+    if(devType.contains("Backend")) {
+      return ResponseEntity.ok(entryRepo.returnDetailsForBackend());
+    } else if(devType.contains("Frontend")) {
+      return ResponseEntity.ok(entryRepo.returnDetailsForFrontend());
+    }
+    return null;
   }
 
-  @GetMapping(value = "/backendReturn", produces = "application/json")
+  /*@GetMapping(value = "/backendReturn", produces = "application/json")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
   public ResponseEntity<List<TicketDetailsEntry>> backEndReturnDetails() {
     return ResponseEntity.ok(entryRepo.returnDetailsForBackend());
-  }
+  }*/
 
   // ---------------- helpers / DTO mapping ----------------
 
