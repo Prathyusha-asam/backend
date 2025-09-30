@@ -9,6 +9,7 @@ import com.demo.dms.service.EntryService;
 import com.demo.dms.service.ParentTicketService;
 import com.demo.dms.web.dto.AdminAndEntryDto;
 import com.demo.dms.web.dto.TicketStats;
+import com.demo.dms.web.dto.WeeklyTrendPoint;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -183,11 +184,20 @@ public class TicketsAdminAndQueryController {
     return null;
   }
 
-  /*@GetMapping(value = "/backendReturn", produces = "application/json")
+  @GetMapping(value = "/weeklyTrends", produces = "application/json")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
-  public ResponseEntity<List<TicketDetailsEntry>> backEndReturnDetails() {
-    return ResponseEntity.ok(entryRepo.returnDetailsForBackend());
-  }*/
+  public List<WeeklyTrendPoint> getWeeklyTrends(
+          @RequestParam int year,
+          @RequestParam int month) {
+    return entryService.getWeeklyTrends(year, month);
+  }
+
+  @GetMapping(value = "/statusCount", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
+  public ResponseEntity<Long> getStatusCount(
+          @RequestParam String status) {
+    return ResponseEntity.ok(entryService.countStatus(status.toLowerCase()));
+  }
 
   // ---------------- helpers / DTO mapping ----------------
 

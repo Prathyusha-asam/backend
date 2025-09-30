@@ -7,11 +7,19 @@ import com.demo.dms.repository.ParentTicketDetailsRepository;
 import com.demo.dms.repository.TicketDetailsEntryRepository;
 import com.demo.dms.security.AuthUtils;
 import com.demo.dms.web.dto.AdminAndEntryDto;
+import com.demo.dms.web.dto.WeeklyTrendPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.temporal.WeekFields;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -98,5 +106,21 @@ public class EntryService {
         child.setStartDate(c.getStartDate());
         child.setEndDate(c.getEndDate());
         return child;
+    }
+
+    public List<WeeklyTrendPoint> getWeeklyTrends(int year, int month) {
+        List<Object[]> rows = repo.findWeeklyTotalsAndReturns(year, month);
+
+        return rows.stream()
+                .map(r -> new WeeklyTrendPoint(
+                        "Week " + ((Number) r[0]).intValue(),   // period as "Week 1", "Week 2", etc.
+                        ((Number) r[1]).intValue(),            // total tickets
+                        ((Number) r[2]).intValue()             // total returned
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public long countStatus(String status) {
+        return repo.countStatusByRequirement(status);
     }
 }
