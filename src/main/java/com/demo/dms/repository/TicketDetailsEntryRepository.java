@@ -43,15 +43,19 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
         SELECT
             w.wk AS week,
             COALESCE(a.total, 0) AS totalTickets,
-            COALESCE(a.returned, 0) AS totalReturned
+            COALESCE(a.returned, 0) AS totalReturned,
+            a.startDate,
+            a.endDate
         FROM (
-            SELECT 1 AS wk UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6
+            SELECT 1 AS wk UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
         ) w
         LEFT JOIN (
             SELECT
                 (WEEK(t.Created_On, 1) - WEEK(DATE_FORMAT(t.Created_On, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
                 COUNT(*) AS total,
-                SUM(CASE WHEN t.Returned = 1 THEN 1 ELSE 0 END) AS returned
+                SUM(CASE WHEN t.Returned = 1 THEN 1 ELSE 0 END) AS returned,
+                MIN(t.Created_On) as startDate,
+                MAX(t.Created_On) as endDate
             FROM Ticket_Details_Entry t
             WHERE MONTH(t.Created_On) = :month
               AND YEAR(t.Created_On) = :year
@@ -63,4 +67,43 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
 
     @Query(value = "SELECT COUNT(c) FROM TicketDetailsEntry c WHERE lower(c.status) = :status")
     long countStatusByRequirement(@Param("status") String status);
+
+    @Query(value = """
+        SELECT
+            (WEEK(t.Created_On, 1) - WEEK(DATE_FORMAT(t.Created_On, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
+            COUNT(t.Id) AS returnCount
+        FROM
+            Ticket_Details_Entry t
+        WHERE
+            t.Returned = 1
+            AND MONTH(t.Created_On) = MONTH(CURRENT_DATE())
+            AND YEAR(t.Created_On) = YEAR(CURRENT_DATE())
+        GROUP BY
+            weekOfMonth
+        ORDER BY
+            weekOfMonth
+    """, nativeQuery = true)
+    List<Object[]> findWeeklyReturnCountsInCurrentMonthForAllDevTypes();
+
+    /**
+     * Fetches the total number of tickets created for every week of the current month
+     * across ALL dev types, regardless of their return status.
+     *
+     * @return A list of object arrays, where each array contains [weekOfMonth, totalCount].
+     */
+    @Query(value = """
+        SELECT
+            (WEEK(t.Created_On, 1) - WEEK(DATE_FORMAT(t.Created_On, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
+            COUNT(t.Id) AS totalCount
+        FROM
+            Ticket_Details_Entry t
+        WHERE
+            MONTH(t.Created_On) = MONTH(CURRENT_DATE())
+            AND YEAR(t.Created_On) = YEAR(CURRENT_DATE())
+        GROUP BY
+            weekOfMonth
+        ORDER BY
+            weekOfMonth
+    """, nativeQuery = true)
+    List<Object[]> findWeeklyTotalCountsInCurrentMonthForAllDevTypes();
 }

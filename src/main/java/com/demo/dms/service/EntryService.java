@@ -11,14 +11,13 @@ import com.demo.dms.web.dto.WeeklyTrendPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,16 +107,57 @@ public class EntryService {
         return child;
     }
 
-    public List<WeeklyTrendPoint> getWeeklyTrends(int year, int month) {
-        List<Object[]> rows = repo.findWeeklyTotalsAndReturns(year, month);
+    public List<WeeklyTrendPoint> getWeeklyTrends() {
+        List<Object[]> returnedDataFromDb = repo.findWeeklyReturnCountsInCurrentMonthForAllDevTypes();
 
-        return rows.stream()
-                .map(r -> new WeeklyTrendPoint(
-                        "Week " + ((Number) r[0]).intValue(),   // period as "Week 1", "Week 2", etc.
-                        ((Number) r[1]).intValue(),            // total tickets
-                        ((Number) r[2]).intValue()             // total returned
-                ))
-                .collect(Collectors.toList());
+        Map<Integer, Integer> returnedResults = returnedDataFromDb.stream()
+                .collect(Collectors.toMap(
+                        row -> ((Number) row[0]).intValue(), // weekOfMonth
+                        row -> ((Number) row[1]).intValue()  // returnCount
+                ));
+
+        // 2. Fetch data for TOTAL tickets.
+        List<Object[]> totalDataFromDb = repo.findWeeklyTotalCountsInCurrentMonthForAllDevTypes();
+        Map<Integer, Integer> totalResults = totalDataFromDb.stream()
+                .collect(Collectors.toMap(
+                        row -> ((Number) row[0]).intValue(), // weekOfMonth
+                        row -> ((Number) row[1]).intValue()  // totalCount
+                ));
+
+        // 3. Prepare for iteration and formatting.
+        List<WeeklyTrendPoint> completeWeeklyTrend = new ArrayList<>();
+        YearMonth currentYearMonth = YearMonth.now();
+        LocalDate firstDayOfMonth = currentYearMonth.atDay(1);
+        LocalDate lastDayOfMonth = currentYearMonth.atEndOfMonth();
+
+        LocalDate currentDay = firstDayOfMonth;
+
+        // 4. Loop through each week of the month to build the labels and aggregate the data.
+        while (currentDay.isBefore(lastDayOfMonth) || currentDay.isEqual(lastDayOfMonth)) {
+            LocalDate weekStartDate = currentDay;
+            LocalDate weekEndDate = currentDay.with(DayOfWeek.SUNDAY);
+
+            if (weekEndDate.isAfter(lastDayOfMonth)) {
+                weekEndDate = lastDayOfMonth;
+            }
+
+            int weekNumber = weekStartDate.get(WeekFields.of(Locale.US).weekOfMonth());
+            int returnedCount = returnedResults.getOrDefault(weekNumber, 0);
+            int totalCount = totalResults.getOrDefault(weekNumber, 0);
+
+            String monthShortName = weekStartDate.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            String label = String.format("(%s %d-%d)",
+                    monthShortName,
+                    weekStartDate.getDayOfMonth(),
+                    weekEndDate.getDayOfMonth());
+
+            // 5. Create the DTO and add it to our final list.
+            completeWeeklyTrend.add(new WeeklyTrendPoint(label, totalCount, returnedCount));
+
+            currentDay = weekEndDate.plusDays(1);
+        }
+
+        return completeWeeklyTrend;
     }
 
     public long countStatus(String status) {

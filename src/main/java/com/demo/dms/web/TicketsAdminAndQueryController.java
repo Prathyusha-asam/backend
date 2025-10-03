@@ -186,10 +186,8 @@ public class TicketsAdminAndQueryController {
 
   @GetMapping(value = "/weeklyTrends", produces = "application/json")
   @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
-  public List<WeeklyTrendPoint> getWeeklyTrends(
-          @RequestParam int year,
-          @RequestParam int month) {
-    return entryService.getWeeklyTrends(year, month);
+  public List<WeeklyTrendPoint> getWeeklyTrends() {
+    return entryService.getWeeklyTrends();
   }
 
   @GetMapping(value = "/statusCount", produces = "application/json")
