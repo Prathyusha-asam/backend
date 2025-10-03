@@ -7,6 +7,7 @@ import com.demo.dms.repository.ParentTicketDetailsRepository;
 import com.demo.dms.repository.TicketDetailsEntryRepository;
 import com.demo.dms.security.AuthUtils;
 import com.demo.dms.web.dto.AdminAndEntryDto;
+import com.demo.dms.web.dto.TicketStatus;
 import com.demo.dms.web.dto.WeeklyTrendPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -160,7 +161,15 @@ public class EntryService {
         return completeWeeklyTrend;
     }
 
-    public long countStatus(String status) {
-        return repo.countStatusByRequirement(status);
+    public List<TicketStatus> countStatus() {
+        List<Object[]> totalCount = repo.countAllStatus();
+        return totalCount.stream()
+                .map(row -> new TicketStatus(
+                        row[0] != null ? row[0].toString() : "UNKNOWN",
+                        Math.toIntExact((Long) row[1])
+                ))
+                .collect(Collectors.toList());
+
     }
+
 }

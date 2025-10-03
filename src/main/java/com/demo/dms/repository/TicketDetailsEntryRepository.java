@@ -1,6 +1,7 @@
 package com.demo.dms.repository;
 
 import com.demo.dms.entity.TicketDetailsEntry;
+import com.demo.dms.web.dto.TicketStatus;
 import com.demo.dms.web.dto.WeeklyTrendPoint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -106,4 +107,9 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
             weekOfMonth
     """, nativeQuery = true)
     List<Object[]> findWeeklyTotalCountsInCurrentMonthForAllDevTypes();
+
+    @Query(value = """
+            select t.status, count(t.status) statusCount from Ticket_Details_Entry t group by t.Status
+            """, nativeQuery = true)
+    List<Object[]> countAllStatus();
 }
