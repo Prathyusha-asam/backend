@@ -168,6 +168,7 @@ public class EntryService {
                         row[0] != null ? row[0].toString() : "UNKNOWN",
                         Math.toIntExact((Long) row[1])
                 ))
+
                 .collect(Collectors.toList());
 
     }
