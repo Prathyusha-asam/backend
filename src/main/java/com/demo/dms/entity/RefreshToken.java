@@ -8,29 +8,30 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 
 @Entity
-@Table(name = "REFRESH_TOKEN")
+@Table(name = "`refresh_token`")
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "ID")
+  @Column(name = "`ID`")
   private Long id;
 
-  @Column(name = "user_id", nullable = false)
+  @Column(name = "`USER_ID`", nullable = false)
   private Integer userId;
 
-  @Column(nullable = false, unique = true, length = 200)
+  @Column(name = "`TOKEN_HASH`", nullable = false, unique = true, length = 200)
   private String tokenHash;
 
-  @Column(nullable = false)
+  @Column(name = "`EXPIRES_AT`", nullable = false)
   private Instant expiresAt;
 
-  @Column(nullable = false)
+  @Column(name = "`REVOKED`", nullable = false)
   private boolean revoked = false;
 
+  @Column(name = "`replaced_by`")
   private String replacedBy;
 
-  @Column(nullable = false)
+  @Column(name = "`CREATED_AT`", nullable = false)
   private Instant createdAt = Instant.now();
 
   public Long getId() { return id; }
