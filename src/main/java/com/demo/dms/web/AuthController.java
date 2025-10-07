@@ -78,7 +78,7 @@ public class AuthController {
 
     // Persist hashed refresh
     Optional<UserAccount> userAccount = userRepo.findByEmailIgnoreCase(req.email());
-    System.out.println("User details -> " + userAccount.get().getFullName());
+    System.out.println("User details -> " + userAccount.get().getUserId());
     Integer userId = userAccount.map(UserAccount::getUserId).orElseThrow();
     refreshSvc.saveRaw(userId, refresh, refreshExpMs);
     return ResponseEntity.ok(TokenPairLoginResponse.bearer(access,refresh,accessExpMs,userAccount));
