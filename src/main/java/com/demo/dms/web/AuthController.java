@@ -77,6 +77,7 @@ public class AuthController {
     String refresh = jwt.generateRefresh(user, refreshJti);
 
     // Persist hashed refresh
+    System.out.println(userRepo.findAll());
     Optional<UserAccount> userAccount = userRepo.findByEmailIgnoreCase(req.email());
     System.out.println("User details -> " + userAccount.get().getUserId());
     Integer userId = userAccount.map(UserAccount::getUserId).orElseThrow();
