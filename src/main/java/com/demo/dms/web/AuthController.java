@@ -44,18 +44,6 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest req) {
 
-    /*try {
-      authManager.authenticate(
-              new UsernamePasswordAuthenticationToken(req.email(), req.password()));
-    } catch (org.springframework.security.authentication.BadCredentialsException
-             | org.springframework.security.core.userdetails.UsernameNotFoundException e) {
-      return ResponseEntity.status(401).body(ApiError.unauthorized("Invalid email or password"));
-    } catch (org.springframework.security.authentication.DisabledException e) {
-      return ResponseEntity.status(403).body(ApiError.forbidden("User is disabled"));
-    } catch (org.springframework.security.authentication.LockedException e) {
-      return ResponseEntity.status(403).body(ApiError.forbidden("User is locked"));
-    }*/
-
     authManager.authenticate(
             new UsernamePasswordAuthenticationToken(req.email(), req.password()));
 
@@ -72,7 +60,6 @@ public class AuthController {
     refreshSvc.saveRaw(userId, refresh, refreshExpMs);
     return ResponseEntity.ok(TokenPairLoginResponse.bearer(access,refresh,accessExpMs,userAccount));
 
-//    return ResponseEntity.ok(TokenPairResponse.bearer(access, refresh, accessExpMs));
   }
 
   @PostMapping("/refresh")
