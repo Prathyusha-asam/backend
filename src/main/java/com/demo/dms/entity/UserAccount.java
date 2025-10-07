@@ -6,29 +6,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "USER_ACCOUNT")
+@Table(name = "`USER_ACCOUNT`")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
+    @Column(name = "`USER_ID`")
     private int userId;
 
-    @Column(name = "FULL_NAME")
+    @Column(name = "`FULL_NAME`")
     private String fullName;
 
-    @Column(name = "EMAIL")
+    @Column(name = "`EMAIL`")
     private String email;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "`PASSWORD`")
     private String password;
 
-    @Column(name = "ROLE")
+    @Column(name = "`ROLE`")
     private String role;
 
-    @Column(name = "DEV_TYPE")
+    @Column(name = "`DEV_TYPE`")
     private String devType;
 
     public int getUserId() {
