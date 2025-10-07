@@ -1,20 +1,22 @@
 package com.demo.dms.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-
-@Setter
-@Getter
 @Entity
 @Table(name = "`USER_ACCOUNT`")
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserAccount {
+
+    public UserAccount() {
+    }
+
+    public UserAccount(int userId, String fullName, String email, String password, String role, String devType) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.devType = devType;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +38,51 @@ public class UserAccount {
     @Column(name = "`DEV_TYPE`")
     private String devType;
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getDevType() {
+        return devType;
+    }
+
+    public void setDevType(String devType) {
+        this.devType = devType;
+    }
 }
