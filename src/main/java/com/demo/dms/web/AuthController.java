@@ -6,6 +6,9 @@ import com.demo.dms.repository.UserAccountRepository;
 import com.demo.dms.security.JwtService;
 import com.demo.dms.security.RefreshTokenService;
 import com.demo.dms.web.dto.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
@@ -14,8 +17,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -62,6 +67,30 @@ public class AuthController {
       e.printStackTrace();
       return ResponseEntity.status(500).body("Error: " + e.getMessage());
     }
+  }
+
+  @Autowired
+  private EntityManager entityManager;
+
+  @GetMapping("/test-native")
+  public ResponseEntity<?> testNative() {
+    Query query = entityManager.createNativeQuery(
+            "SELECT * FROM `USER_ACCOUNT`",
+            UserAccount.class
+    );
+
+    List<UserAccount> users = query.getResultList();
+
+    return ResponseEntity.ok(Map.of(
+            "count", users.size(),
+            "users", users.stream()
+                    .map(u -> Map.of(
+                            "id", u.getUserId(),
+                            "email", u.getEmail(),
+                            "name", u.getFullName()
+                    ))
+                    .collect(Collectors.toList())
+    ));
   }
 
   @PostMapping("/login")
