@@ -43,9 +43,9 @@ public class AuthController {
 
   @GetMapping("/test-user")
   public ResponseEntity<?> testUser() {
-    Optional<UserAccount> user = userRepo.findByEmailIgnoreCase("netravati.k@saksoft.com");
+    Optional<UserAccount> user = userRepo.findByEmail("netravati.k@saksoft.com");
     if (user.isPresent()) {
-      return ResponseEntity.ok("User found: " + user.get().getFullName());
+      return ResponseEntity.ok("User found: " + user.get().getEmail());
     }
     return ResponseEntity.ok("User NOT found");
   }
