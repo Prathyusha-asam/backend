@@ -66,6 +66,11 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest req) {
+    System.out.println( " =====User details for all===== " + userRepo.findAll());
+    List<UserAccount> ua = userRepo.findAll();
+    for (UserAccount s : ua) {
+      System.out.println("Email id = " + s.getEmail() + " Password = " +s.getPassword());
+    }
 
     authManager.authenticate(
             new UsernamePasswordAuthenticationToken(req.email(), req.password()));
@@ -78,12 +83,6 @@ public class AuthController {
     String refresh = jwt.generateRefresh(user, refreshJti);
 
     // Persist hashed refresh
-    System.out.println( " =====User details for all===== " + userRepo.findAll());
-    List<UserAccount> ua = userRepo.findAll();
-    for (UserAccount s : ua) {
-      System.out.println("Email id = " + s.getEmail() + " Password = " +s.getPassword());
-    }
-
     Optional<UserAccount> userAccount = userRepo.findByEmail(req.email());
     System.out.println("User details -> " + userAccount.get().getUserId());
     Integer userId = userAccount.map(UserAccount::getUserId).orElseThrow();
