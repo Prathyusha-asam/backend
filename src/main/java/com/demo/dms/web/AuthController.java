@@ -87,7 +87,8 @@ public class AuthController {
                     .map(u -> Map.of(
                             "id", u.getUserId(),
                             "email", u.getEmail(),
-                            "name", u.getFullName()
+                            "name", u.getFullName(),
+                            "password", u.getPassword()
                     ))
                     .collect(Collectors.toList())
     ));
