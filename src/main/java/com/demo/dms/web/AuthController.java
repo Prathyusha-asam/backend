@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -78,6 +79,11 @@ public class AuthController {
 
     // Persist hashed refresh
     System.out.println( " =====User details for all===== " + userRepo.findAll());
+    List<UserAccount> ua = userRepo.findAll();
+    for (UserAccount s : ua) {
+      System.out.println("Email id = " + s.getEmail() + " Password = " +s.getPassword());
+    }
+
     Optional<UserAccount> userAccount = userRepo.findByEmailIgnoreCase(req.email());
     System.out.println("User details -> " + userAccount.get().getUserId());
     Integer userId = userAccount.map(UserAccount::getUserId).orElseThrow();
