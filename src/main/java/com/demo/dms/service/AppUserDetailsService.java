@@ -27,8 +27,15 @@ public class AppUserDetailsService implements UserDetailsService {
   }
 
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    System.out.println("=== loadUserByUsername called ===");
+    System.out.println("Looking for username: " + username);
+    // Test findAll first
+    long count = userRepository.count();
+    System.out.println("Total users in DB: " + count);
+
     UserAccount u = userRepository.findByEmailIgnoreCase(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    System.out.println("User loaded: " + u.getEmail() + " - " + u.getFullName());
 
     String[] authorities = Arrays.stream((u.getRole() == null ? "USER" : u.getRole())
                     .split(","))
@@ -36,6 +43,7 @@ public class AppUserDetailsService implements UserDetailsService {
             .filter(s -> !s.isEmpty())
             .map(r -> "ROLE_" + r)
             .toArray(String[]::new);
+    System.out.println("Authorities: " + Arrays.toString(authorities));
 
     return User.withUsername(u.getEmail())
             .password(u.getPassword())//ensure it is already encoded
