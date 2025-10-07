@@ -84,7 +84,7 @@ public class AuthController {
       System.out.println("Email id = " + s.getEmail() + " Password = " +s.getPassword());
     }
 
-    Optional<UserAccount> userAccount = userRepo.findByEmailIgnoreCase(req.email());
+    Optional<UserAccount> userAccount = userRepo.findByEmail(req.email());
     System.out.println("User details -> " + userAccount.get().getUserId());
     Integer userId = userAccount.map(UserAccount::getUserId).orElseThrow();
     refreshSvc.saveRaw(userId, refresh, refreshExpMs);
