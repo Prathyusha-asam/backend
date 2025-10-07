@@ -7,37 +7,37 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "LOGS")
+@Table(name = "`LOGS`")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Log {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LOG_ID")
+    @Column(name = "`LOG_ID`")
     private long logId;
 
-    @Column(name = "MODIFIED_ON")
+    @Column(name = "`MODIFIED_ON`")
     private String modifiedDate;
 
-    @Column(name = "DATA")
+    @Column(name = "`DATA`")
     private String data;
 
-    @Column(name = "ACTION")
+    @Column(name = "`ACTION`")
     private String action;
 
-    @Column(name = "MODIFIED_BY")
+    @Column(name = "`MODIFIED_BY`")
     private String modifiedBy;
 
-    @Column(name = "TICKET_NUMBER", nullable = false, unique = true, length = 50)
+    @Column(name = "`TICKET_NUMBER`", nullable = false, unique = true, length = 50)
     @NotBlank(message = "ticketNumber is required")
     @Size(max = 50, message = "ticketNumber must be ≤ 50 chars")
     private String ticketNumber;
 
-    @Column(name = "CREATED_BY")
+    @Column(name = "`CREATED_BY`")
     private String createdBy;
 
-    @Column(name = "CREATED_ON")
+    @Column(name = "`CREATED_ON`")
     private String createdOn;
 
     public long getLogId() {

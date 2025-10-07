@@ -7,29 +7,29 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Ticket_Return")
+@Table(name = "`Ticket_Return`")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketReturn {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "`Id`")
     private long id;
 
-    @Column(name = "Ticket_Entry_Id")
+    @Column(name = "`Ticket_Entry_Id`")
     private long ticketEntryId;
 
-    @Column(name = "Ticket_Number")
+    @Column(name = "`Ticket_Number`")
     private String ticketNumber;
 
-    @Column(name = "Returned_By")
+    @Column(name = "`Returned_By`")
     private String returnedBy;
 
-    @Column(name = "Return_Comment")
+    @Column(name = "`Return_Comment`")
     private String returnComment;
 
-    @Column(name = "Created_On")
+    @Column(name = "`Created_On`")
     private LocalDateTime createdOn;
 
     public long getId() {

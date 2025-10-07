@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-    name = "Parent_Ticket_Details", schema="DMS_DIRECTORY",
+    name = "`Parent_Ticket_Details`", schema="DMS_DIRECTORY",
     uniqueConstraints = @UniqueConstraint(name = "UK_PARENT_TICKET_NUMBER", columnNames = "Ticket_Number")
 )
 @NoArgsConstructor @AllArgsConstructor @Builder
@@ -15,35 +15,35 @@ public class ParentTicketDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "`Id`")
     private Long id;
 
-    @Column(name = "Ticket_Number", nullable = false, length = 50)
+    @Column(name = "`Ticket_Number`", nullable = false, length = 50)
     private String ticketNumber;
 
-    @Column(name = "TicketType", length = 50)
+    @Column(name = "`Ticket_Type`", length = 50)
     private String ticketType;
 
-    @Column(name = "Returned", nullable = false)
+    @Column(name = "`Returned`", nullable = false)
     private boolean returned;
 
-    @Column(name = "Returned_Number", nullable = false)
+    @Column(name = "`Returned_Number`", nullable = false)
     private int returnedNumber;
 
-    @Column(name = "Dev_Type")
+    @Column(name = "`Dev_Type`")
     private String devType;
 
-    @Column(name = "Created_By", length = 255)
+    @Column(name = "`Created_By`", length = 255)
     private String createdBy;
 
     // DB sets defaults; mark read-only so JPA doesn’t try to write them.
-    @Column(name = "Created_On", insertable = false, updatable = false)
+    @Column(name = "`Created_On`", insertable = false, updatable = false)
     private LocalDateTime createdOn;
 
-    @Column(name = "Updated_By", length = 255)
+    @Column(name = "`Updated_By`", length = 255)
     private String updatedBy;
 
-    @Column(name = "Updated_On", insertable = false, updatable = false)
+    @Column(name = "`Updated_On`", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
 
