@@ -41,6 +41,15 @@ public class AuthController {
     this.userRepo = userRepo;
   }
 
+  @GetMapping("/test-user")
+  public ResponseEntity<?> testUser() {
+    Optional<UserAccount> user = userRepo.findByEmailIgnoreCase("netravati.k@saksoft.com");
+    if (user.isPresent()) {
+      return ResponseEntity.ok("User found: " + user.get().getFullName());
+    }
+    return ResponseEntity.ok("User NOT found");
+  }
+
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest req) {
 
