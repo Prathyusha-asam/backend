@@ -43,11 +43,24 @@ public class AuthController {
 
   @GetMapping("/test-user")
   public ResponseEntity<?> testUser() {
-    Optional<UserAccount> user = userRepo.findByEmail("netravati.k@saksoft.com");
-    if (user.isPresent()) {
-      return ResponseEntity.ok("User found: " + user.get().getEmail());
+    System.out.println("=== TEST USER ENDPOINT CALLED ===");
+    System.out.println("Looking for email: netravati.k@saksoft.com");
+
+    try {
+      Optional<UserAccount> user = userRepo.findByEmail("netravati.k@saksoft.com");
+
+      if (user.isPresent()) {
+        System.out.println("USER FOUND: " + user.get().getFullName());
+        return ResponseEntity.ok("User found: " + user.get().getFullName());
+      } else {
+        System.out.println("USER NOT FOUND");
+        return ResponseEntity.ok("User NOT found in database");
+      }
+    } catch (Exception e) {
+      System.out.println("ERROR: " + e.getMessage());
+      e.printStackTrace();
+      return ResponseEntity.status(500).body("Error: " + e.getMessage());
     }
-    return ResponseEntity.ok("User NOT found");
   }
 
   @PostMapping("/login")
