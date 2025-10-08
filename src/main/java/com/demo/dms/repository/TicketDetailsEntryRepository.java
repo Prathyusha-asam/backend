@@ -71,14 +71,14 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
 
     @Query(value = """
         SELECT
-            (WEEK(t.Created_On, 1) - WEEK(DATE_FORMAT(t.Created_On, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
-            COUNT(t.Id) AS returnCount
+            (WEEK(t.created_on, 1) - WEEK(DATE_FORMAT(t.created_on, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
+            COUNT(t.id) AS returnCount
         FROM
-            Ticket_Details_Entry t
+            ticket_details_entry t
         WHERE
-            t.Returned = 1
-            AND MONTH(t.Created_On) = MONTH(CURRENT_DATE())
-            AND YEAR(t.Created_On) = YEAR(CURRENT_DATE())
+            t.returned = 1
+            AND MONTH(t.created_on) = MONTH(CURRENT_DATE())
+            AND YEAR(t.created_on) = YEAR(CURRENT_DATE())
         GROUP BY
             weekOfMonth
         ORDER BY
@@ -94,13 +94,13 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
      */
     @Query(value = """
         SELECT
-            (WEEK(t.Created_On, 1) - WEEK(DATE_FORMAT(t.Created_On, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
-            COUNT(t.Id) AS totalCount
+            (WEEK(t.created_on, 1) - WEEK(DATE_FORMAT(t.created_on, '%Y-%m-01'), 1) + 1) AS weekOfMonth,
+            COUNT(t.id) AS totalCount
         FROM
-            Ticket_Details_Entry t
+            ticket_details_entry t
         WHERE
-            MONTH(t.Created_On) = MONTH(CURRENT_DATE())
-            AND YEAR(t.Created_On) = YEAR(CURRENT_DATE())
+            MONTH(t.created_on) = MONTH(CURRENT_DATE())
+            AND YEAR(t.created_on) = YEAR(CURRENT_DATE())
         GROUP BY
             weekOfMonth
         ORDER BY
@@ -109,7 +109,7 @@ public interface TicketDetailsEntryRepository extends JpaRepository<TicketDetail
     List<Object[]> findWeeklyTotalCountsInCurrentMonthForAllDevTypes();
 
     @Query(value = """
-            select t.status, count(t.status) statusCount from Ticket_Details_Entry t group by t.Status
+            select t.status, count(t.status) statusCount from ticket_details_entry t group by t.status
             """, nativeQuery = true)
     List<Object[]> countAllStatus();
 }
