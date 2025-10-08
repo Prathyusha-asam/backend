@@ -6,62 +6,62 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "`Ticket_Details_Entry`")
+@Table(name = "ticket_details_entry")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class TicketDetailsEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "`Id`")
+    @Column(name = "id")
     private Long id;
 
     // Association to parent via unique Ticket_Number (NOT the PK)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-        name = "`Ticket_Number`",
-        referencedColumnName = "`Ticket_Number`",
-        foreignKey = @ForeignKey(name = "`FK_TDE_PARENT_TICKET`"),
+        name = "ticket_number",
+        referencedColumnName = "ticket_number",
+        foreignKey = @ForeignKey(name = "FK_TDE_PARENT_TICKET"),
         nullable = false
     )
     private ParentTicketDetails ticket;
 
-    @Column(name = "`Dev_Type`", nullable = false, length = 50)
+    @Column(name = "dev_type", nullable = false, length = 50)
     private String devType;
 
-    @Column(name = "`Assignee`", length = 255)
+    @Column(name = "assignee", length = 255)
     private String assignee;
 
-    @Column(name = "`Estimation`", length = 50)
+    @Column(name = "estimation", length = 50)
     private long estimation;
 
-    @Column(name = "`Status`", length = 50)
+    @Column(name = "status", length = 50)
     private String status;
 
-    @Column(name = "`Start_Date`", length = 50)
+    @Column(name = "start_date", length = 50)
     private String startDate;
 
-    @Column(name = "`End_Date`", length = 50)
+    @Column(name = "end_date", length = 50)
     private String endDate;
 
-    @Column(name = "`Created_By`", length = 255)
+    @Column(name = "created_by", length = 255)
     private String createdBy;
 
-    @Column(name = "`Created_On`", insertable = false, updatable = false)
+    @Column(name = "created_on", insertable = false, updatable = false)
     private LocalDateTime createdOn;
 
-    @Column(name = "`Updated_By`", length = 255)
+    @Column(name = "updated_by", length = 255)
     private String updatedBy;
 
-    @Column(name = "`Updated_On`", insertable = false, updatable = false)
+    @Column(name = "updated_on", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
-    @Column(name = "`Comments`")
+    @Column(name = "comments")
     private String comments;
 
-    @Column(name = "`Returned`")
+    @Column(name = "returned")
     private boolean returned;
 
-    @Column(name = "`Returned_Number`")
+    @Column(name = "returned_Number")
     private int returnedNumber;
 
 

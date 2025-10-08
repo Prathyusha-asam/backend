@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 
 @Entity
-@Table(name = "`refresh_token`")
+@Table(name = "refresh_token")
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {
@@ -16,22 +16,22 @@ public class RefreshToken {
   @Column(name = "`ID`")
   private Long id;
 
-  @Column(name = "`USER_ID`", nullable = false)
+  @Column(name = "user_id", nullable = false)
   private Integer userId;
 
-  @Column(name = "`TOKEN_HASH`", nullable = false, unique = true, length = 200)
+  @Column(name = "token_hash", nullable = false, unique = true, length = 200)
   private String tokenHash;
 
-  @Column(name = "`EXPIRES_AT`", nullable = false)
+  @Column(name = "expires_at", nullable = false)
   private Instant expiresAt;
 
-  @Column(name = "`REVOKED`", nullable = false)
+  @Column(name = "revoked", nullable = false)
   private boolean revoked = false;
 
-  @Column(name = "`replaced_by`")
+  @Column(name = "replaced_by")
   private String replacedBy;
 
-  @Column(name = "`CREATED_AT`", nullable = false)
+  @Column(name = "created_at", nullable = false)
   private Instant createdAt = Instant.now();
 
   public Long getId() { return id; }

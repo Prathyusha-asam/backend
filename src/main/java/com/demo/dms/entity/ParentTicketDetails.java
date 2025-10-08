@@ -6,44 +6,41 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "`Parent_Ticket_Details`", schema="DMS_DIRECTORY",
-    uniqueConstraints = @UniqueConstraint(name = "UK_PARENT_TICKET_NUMBER", columnNames = "Ticket_Number")
-)
+@Table(name = "parent_ticket_details")
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class ParentTicketDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "`Id`")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "`Ticket_Number`", nullable = false, length = 50)
+    @Column(name = "ticket_number", nullable = false, length = 50)
     private String ticketNumber;
 
-    @Column(name = "`Ticket_Type`", length = 50)
+    @Column(name = "ticket_type", length = 50)
     private String ticketType;
 
-    @Column(name = "`Returned`", nullable = false)
+    @Column(name = "returned", nullable = false)
     private boolean returned;
 
-    @Column(name = "`Returned_Number`", nullable = false)
+    @Column(name = "returned_number", nullable = false)
     private int returnedNumber;
 
-    @Column(name = "`Dev_Type`")
+    @Column(name = "dev_type")
     private String devType;
 
-    @Column(name = "`Created_By`", length = 255)
+    @Column(name = "created_by", length = 255)
     private String createdBy;
 
     // DB sets defaults; mark read-only so JPA doesn’t try to write them.
-    @Column(name = "`Created_On`", insertable = false, updatable = false)
+    @Column(name = "created_on", insertable = false, updatable = false)
     private LocalDateTime createdOn;
 
-    @Column(name = "`Updated_By`", length = 255)
+    @Column(name = "updated_by", length = 255)
     private String updatedBy;
 
-    @Column(name = "`Updated_On`", insertable = false, updatable = false)
+    @Column(name = "updated_on", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
 
