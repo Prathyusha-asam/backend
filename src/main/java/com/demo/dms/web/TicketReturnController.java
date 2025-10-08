@@ -24,6 +24,7 @@ public class TicketReturnController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','BACKEND','FRONTEND','QA')")
     public ResponseEntity<TicketReturn> create(@RequestBody TicketReturn req) {
+        System.out.println("inside creating return details====================$$$$$$$$$$$$$$$$");
         return ResponseEntity.ok(ticketReturnService.save(req));
     }
 
